@@ -1,0 +1,235 @@
+﻿[CHƯƠNG 09 - GIÁM SÁT HOẠT ĐỘNG HỆ QUẢN TRỊ CƠ SỞ DỮ LIỆU]
+
+=========================================================================
+
+* Counter: thông số hoạt động của hệ thống, thường sử dụng phần mềm (của hệ điều hành) để đo lường.
+	1. Tên counter.
+	2. Ý nghĩa của counter.
+	3. Khuynh hướng giá trị càng cao hay càng thất thì sẽ càng tốt (so sánh so với mức khi hoạt động bình thường).
+	4. Ngưỡng an toàn nên có.
+
+Khi hệ thống đang hoạt động bình thường đã có sẵn các công cụ để thu thập thông số hoạt động có thể định lượng được, có giá trị cụ thể (counter). Trong SQL, nếu tính luôn cả phần cứng, phần mềm và những gì có liên quan thì sẽ có hơn 1000 counter, và có công cụ để lấy những thông số giá trị đó.
+
+Khi cố gắng sửa một vấn đề trên hệ thống nhưng không thành công thì nên trả hệ thống về trạng thái ban đầu như lúc chưa sửa để tránh tình trạng lỗi chồng lỗi do sửa lỗi đoán mò (mad clicker).
+
+---------------------------------------------
+
+[MỤC ĐÍCH]
+
+** Mục đích giám sát hệ thống (Monitoring and Optimization):
+
+	1. Tài nguyên hệ thống (System resources): RAM, CPU, các file, ổ cứng,...
+
+	2. Bản thân phền mềm SQL Server (SQL Server itself): tốn bao nhiêu RAM khi chạy, đường truyền,...
+
+	3. Cơ sở dữ liệu (The database): xem các thiết kế của CSDL có bị sai/không đúng như lý thuyết hoặc thiết kế không được tối ưu, có bảng nào thiếu khoá chính, cột bị trùng mà không có khoá chính và khoá ngoại, thiếu index trên các cột có nhiều truy vấn,...
+
+	4. Các ứng dụng cơ sở dữ liệu (The database application): các ứng dụng có sử dụng CSDL như SQL Server Management Studio, phần mềm bán hàng,...
+
+	5. Mạng (The network): lấy thông số truyền dữ liệu qua mạng LAN,...
+
+	-> Giám sát hệ thống là việc thu thập các thông số counter sau khi thay đổi hệ thống để so sánh thông số hoạt động, tìm ra nguyên nhân hư hỏng, sửa hoặc tối ưu hoá hoạt động của hệ thống.
+
+=========================================================================
+
+[CHIẾN LƯỢC TỐI ƯU HOÁ]
+
+** Chiến lược tối ưu hoá hệ thống (Optimization Strategy):
+
+	1.Tạo một ngưỡng cho là tốt để đánh giá (Create a performance baseline): lấy bộ thông số chuẩn khi Server đang hoạt động bình thường.
+
+	2. Cân chỉnh để không bị rớt xa khỏi ngưỡng vừa tạo (Complete periodic performance audits): tìm phương án để tối ưu hoá hệ thống bằng cách đổi cách lưu dữ liệu,... các thông số sau khi chỉnh vẫn phải nằm trong mức chuẩn đó (baseline).
+
+	3. Thay đổi và đánh giá kết quả đạt được (Make changes and evaluate their impact): thực hiện thay đổi và lấy bộ thông số mới so sánh với bộ thông số chuẩn, nếu tốt hơn thì giữ nguyên thông số mới, nếu kém hơn thì phải phục hồi về nguyên trạng.
+
+	4. Tạo lại ngưỡng đánh giá mới (Reset the baseline): khi trạng thái mới có thông số tốt hơn mức chuẩn thì ta biến mức mới thành mức chuẩn.
+
+=========================================================================
+
+[ĐỊNH LƯỢNG]
+
+** Dùng phép định lượng (Performance Counters):
+
+	1. Processor Counters: các thông số liên quan đến CPU.
+		- Processor: % Processor Time
+			1. Tên counter: Processor: % Processor Time.
+			2. Ý nghĩa của counter: phần trăm thời gian trung bình mà CPU bận tại một khoảng thời điểm (80% nghĩa là trong 100 giây thì CPU bận hết 80 giây).
+			3. Khuynh hướng giá trị: càng thấp càng tốt.
+			4. Ngưỡng an toàn nên có: nhỏ hơn 70%, nếu cao hơn thì có lẽ CPU đã bị nghẽn cổ chai, nên xem xét để tối ưu hoá các tiến trình, nâng cấp CPU hoặc cả hai.
+
+--------------------
+
+		- Process: % Processor Time (sqlservr)
+			1. Tên counter: Process: % Processor Time (sqlservr).
+			2. Ý nghĩa của counter: phần trăm thời gian mà CPU bận do SQL Server chiếm dụng (% thời gian phải phục vụ cho SQL Server).
+			3. Khuynh hướng giá trị: càng thấp càng tốt.
+			4. Ngưỡng an toàn nên có: tuỳ theo Server, nếu Server lớn thì phần trăm có thể lớn.
+
+--------------------
+
+		- System: Processor Queue Length
+			1. Tên counter: System: Processor Queue Length
+			2. Ý nghĩa của counter: hàng đợi (tính bằng số nguyên) trung bình trong một khoảng thời gian của các dòng lệnh chờ CPU xử lý.
+			3. Khuynh hướng giá trị: càng thấp càng tốt.
+			4. Ngưỡng an toàn nên có: số lượng hàng đợi gấp đôi số CPU vật lý (16 hàng đợi - 8 CPU), mỗi CPU chỉ nên có tối đa 2 hàng đợi.
+
+---------------------------------------------
+
+	2. Disk Counters: các thông số liên quan đến ổ cứng.
+		- PhysicalDisk: Avg. Disk Queue Length
+			1. Tên counter: PhysicalDisk: Avg. Disk Queue Length.
+			2. Ý nghĩa của counter: chiều dài trung bình của các lệnh nằm trong hàng đợi để chờ xử lý.
+			3. Khuynh hướng giá trị: càng thấp càng tốt.
+			4. Ngưỡng an toàn nên có: nên nhỏ hơn hai lần số lượng ổ cứng của Server, nếu CSDL được lưu trong một dãy gồm 10 ổ đĩa thì con số này nên dưới 20.
+
+--------------------
+
+		- PhysicalDisk: % Disk Time
+			1. Tên counter: PhysicalDisk: % Disk Time.
+			2. Ý nghĩa của counter: phần trăm thời gian ổ đĩa bị bận.
+			3. Khuynh hướng giá trị: càng thấp càng tốt.
+			4. Ngưỡng an toàn nên có: từ 60% trở xuống, nếu trên 60% thì đĩa sẽ bị quá tải trong các giờ cao điểm.
+
+---------------------------------------------
+
+	3. Memory Counters: các thông số liên quan đến RAM.
+		- Memory: Pages/Sec
+			1. Tên counter: Memory: Pages/Sec
+			2. Ý nghĩa của counter: số lượng Pages đọc, ghi từ bộ nhớ ảo/giây (khi RAM đầy thì sẽ lấy dung lượng ở cứng giả lập làm RAM để thay thế).
+			3. Khuynh hướng giá trị: càng thấp càng tốt.
+			4. Ngưỡng an toàn nên có: giữ nguyên là 0 Page/giây.
+
+--------------------
+
+		- Memory: Available Bytes
+			2. Ý nghĩa của counter: RAM còn trống.
+
+--------------------
+
+		- Memory: Process:Working Set (sqlservr)
+			2. Ý nghĩa của counter: dung lượng RAM mà SQL Server chiếm.
+			3. Khuynh hướng giá trị: càng thấp càng tốt.
+			4. Ngưỡng an toàn nên có: không đo lường được.
+
+---------------------------------------------
+
+	4. Network Counters: các thông số liên quan đến mạng.
+		- Network Interface: Bytes Total/Sec
+			2. Ý nghĩa của counter: tổng dung lượng truyền và nhận trong một giây trên mạng LAN.
+
+---------------------------------------------
+
+	5. SQL Server Counters: các thông số liên quan đến SQL Server.
+		- SQL Server: General Statistics: User Connections
+			2. Ý nghĩa của counter: số lượng người dùng hiện tại đang kết nối.
+
+--------------------
+
+		- SQL Server: Locks: Average Wait Time
+			2. Ý nghĩa của counter: khi xảy ra lock, người dùng sẽ chờ trong khoảng thời gian trung bình là bao nhiêu trước khi hết.
+
+--------------------
+
+		- SQL Server: Locks: Deadlocks/Sec
+			2. Ý nghĩa của counter: số lượng deadlock/giây.
+
+--------------------
+
+		- SQL Server Access Methods: Page Splits/sec
+			2. Ý nghĩa của counter: số lượng Page phải tạo mới khi sử dụng data file trong một giây.
+
+=========================================================================
+
+[CÁCH LẤY THÔNG SỐ]
+
+** Dynamic Management Views: thông số động, mỗi lần chạy sẽ cho ra một kết quả khác nhau.
+- sys.dm_os_performance_counters
+- sys.dm_db_index_physical_stats
+- sys.dm_db_index_usage_stats
+
+// Cách lấy bằng câu lệnh:
+
+New Query: Select * From sys.dm_os_performance_counters
+			 sys.dm_db_index_physical_stats
+			 sys.dm_db_index_usage_stats
+
+---------------------------------------------
+
+// Cách lấy bằng công cụ:
+
+** Công cụ và kỹ thuật giám sát (Tools and Techniques for Monitoring Performance):
+
+* Log File Viewer: công cụ để xem thông tin log file của hệ điều hành Windows, SQL Server sử dụng ké, chỉ những người có quyền cao mới có thể xem được.
+	Tên Server -> Management -> SQL Server Logs -> Chọn một log file -> Chuột phải, chọn View SQL Server Log
+
+--------------------
+
+* Activity Monitor: công cụ xem thông tin các tiến trình (process)
+	Tên Server -> Chuột phải, chọn Activity Monitor
+
+--------------------
+
+* System Stored Procedures: xem thông tin các tiến trình (process) đang sử dụng SQL Server và hiển thị dưới dạng danh sách bảng (New Query: sp_who2).
+	- sp_who (9 cột)
+	- sp_who2 (13 cột, cột spid lặp 2 lần)
+
+--------------------
+
+* SQL Server Locking
+	- sp_lock: xem thông tin lock của từng process (sp_lock spid)
+
+--------------------
+
+* KILL: hủy process bằng id (lệnh: kill spid)
+
+--------------------
+
+* Using Profiler: tạo các trace để giám sát/theo dõi, phát hiện và phân tích những đối tượng nghi vấn (phần mềm, CSDL, các câu truy vấn tốn tài nguyên,...).
+	Tools -> SQL Server Profiler
+
+--------------------
+
+* Using the Database Tuning Advisor (DTA): công cụ đưa ra lời khuyên trong việc thiết kế CSDL, ví dụ: bảng không có khoá chính, thiếu index,...
+
+--------------------
+
+* Using the DTA with Profiler: kết hợp cả hai công cụ, giám sát và đánh giá CSDL.
+
+--------------------
+
+* Monitoring Files: giám sát file, ví dụ: CSDL chưa mấy file, file chứa ở đâu, trong file chứa những gì (bảng, hàng cột,...), dung lượng file,... 
+
+--------------------
+
+* Disk Usage Report: cho thấy từng file chứa những bảng nào, dung lượng bao nhiêu,...
+	Tên Server -> Databases -> Tên CSDL -> Reports -> Standard Reports -> Disk Usage
+
+--------------------
+
+* Monitoring Files with Performance Monitor: công cụ của hệ điều hành để giám sát các counter theo thời gian thực (không phải dạng bảng), chủ yếu phục vụ cho việc sửa lỗi. Được chia thành nhóm và có thể theo dõi nhiều tiến trình cùng một lúc.
+	Windows Administrative Tools -> Performance Monitor
+
+=========================================================================
+
+[GIÁM SÁT CSDL]
+
+* Trigger: là các stored procedure đặc biệt được thực thi tự động để phản hồi với các đối tượng cơ sở dữ.
+
+Giám sát việc chỉnh sửa CSDL (Monitoring Database Modifications)
+	- Data Definition Language (DDL) Triggers: từ SQL Server 2008, Microsoft đã cho phép viết trigger trên DDL thay vì DML.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

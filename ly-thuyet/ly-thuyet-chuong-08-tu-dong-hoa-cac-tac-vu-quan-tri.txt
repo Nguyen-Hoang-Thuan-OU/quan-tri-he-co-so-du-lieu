@@ -1,0 +1,295 @@
+﻿[CHƯƠNG 08: TỰ ĐỘNG HÓA CÁC TÁC VỤ QUẢN TRỊ]
+
+=========================================================================
+
+Thao tác sao lưu cần được tự động vì có rất nhiều CSDL phải sao lưu theo đúng lịch bằng những chiến lược sao lưu khác nhau.
+	-> Cần tự động hoá các thao tác quản trị này.
+
+Ngoài tự động thực hiện các thao tác quản trị này theo đúng lịch, ta còn có thể tự động khi không biết lịch cụ thể, đôi khi sẽ có kèm theo điều kiện hoạt động và sự kiện.
+	Ví dụ 1: tự động gửi email để thông báo khi dung lượng ổ cứng đầy 80%.
+	Ví dụ 2: tự động gửi tin nhắn SMS để thông báo khi gặp lỗi [Mã lỗi].
+	Ví dụ 3: tự động gửi tin nhắn bằng lệnh Net Send trong mạng LAN để thông báo khi CPU sử dụng quá cao,...
+
+---------------------------------------------
+
+[GIẢI THÍCH HÌNH VẼ]
+
+** Trong SQL Server có 2 dịch vụ, Database Engine là dịch vụ chính để xử lý dữ liệu, Agent Service là dịch vụ để phục vụ cho việc tự động hoá.
+
+** Trong việc tự động hoá:
+
+	- Operator: người nhận thông báo tự động (email, tin nhắn SMS, tin nhắn bằng lệnh Net Send trong mạng LAN) từ SQL Server (Agent Service), có thể là một người ngoài mà không nhất thiết phải là người trong cùng công ty (không có Log In).
+
+	- Job: chưa thông tin chung của một công việc cần làm tự động, một job sẽ có nhiều hành động (job step) theo các bước và lịch biểu tự động. Sau khi hoàn thành job thì có thể thông báo cho Operator bằng phương tiện đã chỉ định trước.
+		-> Hẹn chạy tự động với những loại công việc biết trước lịch.
+
+		+ Job step: hành động của job, liệt kê từng bước cụ thể của một job. Mỗi job step đều có thể là một lệnh của SQL Server, lệnh của hệ điều hành,... Có thể điều chỉnh để chạy lần lượt hoặc sau khi một job step thành công thì có thể nhảy sang một job step khác không theo thứ tự.
+			Ví dụ:
+				Job: "Sao lưu"
+				Job step 1: Sao lưu CSDL Northwind.
+				Job step 2: Sao lưu CSDL AdventureWorks.
+				Job step 2: Sao lưu CSDL Publishers.
+
+		+ Schedule: lịch biểu tự động cho job, một job có thể đặt nhiều lịch
+			Ví dụ:
+				- Chạy lúc 00:02 A.M. vào các ngày T2, T4, T6.
+				- Chạy thêm lúc 13:00 P.M. vào các ngày T3, T5, T7.
+
+	- Alert: bộ cảnh báo được kích hoạt (raise) và tự động gửi thông báo bởi điều kiện hoạt động/hành động hoặc sự cố/sự kiện khi xảy ra lỗi thuộc vào nhóm nghiêm trọng (không thể biết trước được lịch xảy ra). Alert cũng có thể kích hoạt một Job chạy để tối ưu, sửa lỗi,... (những Job không có lịch hẹn và không phải là Job bảo trì) trước khi tiến hành gửi thông báo cho Operator.
+		-> Tự động gửi thông báo cảnh báo cho Operator với những loại công việc không thể biết trước lịch (chỉ thực hiện khi khoả điều kiện hoặc sự kiện).
+
+		+ Kích hoạt dựa trên điều kiện hoạt động: được kích hoạt nếu lỗi thoả điều kiện thì sẽ tiến hành gửi thông báo và có thể xử lý thủ công hoặc tự động kích hoạt thêm một job chạy. 
+
+		+ Kích hoạt dựa trên sự cố/sự kiện: được kích hoạt nếu lỗi thoả sự kiện (mã lỗi tương ứng hoặc nhóm lỗi được chia theo mức độ nghiêm trọng) và gửi thông báo lỗi đến Operator.
+
+-----------------------
+
+Ví dụ: tự động kích hoạt một công việc khi gặp một mã lỗi quen thuộc
+
+	Bước 01: nhận được thông báo với mã lỗi quen thuộc mà ta đã từng gặp trong quá khứ và biết cách để sửa lỗi.
+	Bước 02: tạo Alert với Sự kiện [Mã lỗi].
+	Bước 03: tạo Job, viết code để xử lý lỗi trong Job step (không có Schedule).
+	Bước 04: đợi đến khi Alert được kích hoạt thì sẽ kéo Job chạy theo.
+	Bước 05: gửi thông báo khi tự động xử lý lỗi thành công hoặc thất bại.
+
+=========================================================================
+
+[THỰC HÀNH]
+
+Khởi động dịch vụ SQL Server Agent -> Chuột phải, chọn Start -> Yes
+
+---------------------------------------------
+
+[OPERATOR]
+
+** Tạo Operator: Tên Server -> SQL Server Agent -> Operators -> New Operator
+	- Name: tên của người nhận thông báo tự động từ SQL Server, ví dụ: Operator1.
+	- E-mail name: địa chỉ email để nhận thông báo, ví dụ: 185abc@ou.edu.vn.
+	- Net send address: tên của máy tính trong mạng LAN, ServerDatabase01.
+	- Pager e-mail name: địa chỉ do nhà mạng viễn thông cung cấp, nhà mạng sẽ nhận và chuyển nội dung email thành văn bản SMS (có thể cắt thành nhiều phần trước khi gửi nếu cần), ví dụ: 0998765432@viettel.vn.
+	- Pager on duty schedule: lịch trực để nhận thông báo, chỉ những người có lịch trực mới nhận được thông báo vào những ngày có lịch.
+
+---------------------------------------------
+
+[CẤU HÌNH GMAIL]
+
+// Cho phép các ứng dụng bên ngoài (không phải Gmail) sử dụng tài khoản email này để gửi email:
+	- Tắt chế độ bảo mật của Gmail: Tài khoản Google
+		-> Quản lý Tài khoản Google của bạn (Manage your Google Account)
+		-> Thẻ: Bảo mật (Tab: Security)
+		-> Quyền truy cập của ứng dụng kém an toàn (Less secure app access): Bật quyền truy cập (không nên) (Turn on access (not recommended))
+
+-----------------------
+
+// Định cấu hình cho ứng dụng email khách
+	- Lấy thông tin Server: Truy cập Gmail
+		-> Cài đặt (hình bánh răng cưa)
+		-> Tuỳ chọn cài đặt nhanh: Xem tất cả chế độ cài đặt
+		-> Chuyển tiếp và POP/IMAP
+		-> Tải xuống qua POP: 3. Định cấu hình cho ứng dụng email khách của bạn -> Hướng dẫn định cấu hình
+			* Máy chủ thư đi (SMTP):
+				smtp.gmail.com
+				Yêu cầu SSL: Có
+				Yêu cầu TLS: Có (nếu có)
+				Yêu cầu xác thực: Có
+				Cổng cho TLS/STARTTLS: 587
+
+-----------------------
+
+[CẤU HÌNH DATABASE MAIL]
+
+// Cấu hình tài khoản để gửi email (gửi email đi, không phải nhận email về)
+
+* Dịch vụ gửi email: Tên Server -> Management -> Database Mail (Đồ cổ: Legacy -> SQL Mail) -> Configure Database Mail -> Set up Database Mail...
+	- Profile name: nhóm tài khoản gồm nhiều tài khoản được khai báo ở SMTP accounts, nếu trong profile có nhiều tài khoản thì tất cả tài khoản sẽ được sử dụng để cùng gửi email.
+	- Description:
+	- SMTP accounts: nơi hiển thị danh sách các tài khoản, có thể cung cấp nhiều tài khoản.
+
+		-> Add -> New Account
+
+		// Thông tin tài khoản
+		+ Account name: tên cho tài khoản, có thử sử dụng E-mail address (địa chỉ email) làm tên cho tài khoản, ví dụ: 185abc@ou.edu.vn.
+		+ Description: những ghi chú đặc biệt về tài khoản này.
+
+		// Outgoing Mail Server (SMTP)
+		+ E-mail address: địa chỉ email dùng để gửi đi, ví dụ: 185abc@ou.edu.vn.
+		+ Display name: tên hiển thị cho người Operator xem khi họ nhận email, nếu để trống thì địa chỉ email sẽ được hiển thị.
+		+ Reply e-mail: địa chỉ email để chuyển tiếp (forward) nếu Operator có gửi phản hồi lại email.
+		+ Server name: smtp.gmail.com
+		+ Port number: 587
+		[✓] This server requires a secure connection (SSL)
+
+		// SMTP Authentication
+		+ Windows Authentication:
+		+ Basic authentication:
+			* User name: 185abc@ou.edu.vn
+			* Password: mật khẩu thật của địa chỉ email.
+			* Confirm password: xác nhận mật khẩu.
+		+ Anonymous authentication:
+
+-----------------------
+
+// Gửi email
+
+* Dịch vụ gửi email: Tên Server -> Management -> Database Mail -> Send Test E-Mail
+	- Database Mail Profile: chọn tên của profile đã tạo.
+	- To: địa chỉ của người nhận email (địa chỉ email của Operator).
+	- Subject: tiêu đề của email.
+	- Body: nội dung của email.
+
+-----------------------
+
+Database Mail và SQL Server Agent không có liên quan đến nhau, vì vậy cần cấu hình để SQL Server Agent có thể sử dụng Database Mail và tự động gửi email đến Operator bằng Job và Alert.
+
+// Khai báo liên kết SQL Server Agent sử dụng Database Mail để gửi email:
+
+Tên Server -> SQL Server Agent -> Chuột phải, chọn Properties -> Select a page: Alert System (không liên quan đến Alert trong tự động hoá)
+	- Mail session:
+		[✓] Enable mail profile
+		Mail system: Database Mail.
+		Mail profile: chọn profile để gửi email đi.
+-> OK -> Restart (vì đây là dịch vụ) -> Yes.
+
+---------------------------------------------
+
+[JOB]
+
+** Tạo Job: Tên Server -> SQL Server Agent -> Jobs -> New Job
+	- Name: tên của job, không thể đặt tên tiếng Việt có dấu, ví dụ: Job sao luu.
+	- Owner: mặc định sẽ là tài khoản Log In, nên đổi thành tài khoản sa nếu có đem đi để chạy trên nhiều máy tính khác nhau.
+	- Category: chọn loại job, ví dụ: Database Maintenance.
+	- Descript: ghi chú để những người sau biết mục đích của job.
+	- [✓] Enable.
+
+---------------------------------------------
+
+[JOB STEPS]
+
+--Sao lưu full, không nối đuôi (để phục vụ việc test)
+use master
+Backup database Northwind
+to disk = N'C:\nw.bak'
+with format
+
+--Sao lưu full, không nối đuôi (để phục vụ việc test)
+use master
+Backup database pubs
+to disk = N'C:\pubs.bak'
+with format
+-----------------------
+
+** Tạo Job Steps: Tên Server -> SQL Server Agent -> Jobs -> Tên job đã tạo -> Chuột phải, chọn Properties -> Select a page: Steps -> New -> Cửa sổ New Job Step hiện ra
+	- Step name: tên của bước, ví dụ: B1 - Sao luu Northwind, B2 - Sao luu Pubs.
+	- Type: chọn loại lệnh Transact-SQL script (T-SQL). Có 2 loại lệnh thường sử dụng là Operating system (CmdExec) và Transact-SQL script (T-SQL).
+		+ Operating system (CmdExec): dành cho các quản trị viên hệ điều hành sử dụng các lệnh Sleep, Stand by, Shutdown,...
+		+ Transact-SQL script (T-SQL): dành cho các quản trị SQL Server.
+	- Database: master
+	- Command: các câu lệnh sao lưu full, không nối đuôi,...
+		+ Parse: kiểm tra cú pháp, không nên sử dụng ở đây mà thay vào đó kiểm tra bằng Parse ở bên ngoài nơi viết câu lệnh Query.
+
+	// Chỉnh hành động tiếp theo khi job chạy thành công hoặc thất bại:
+	Tên của Job Step -> Edit (Job Step Properties) -> Advanced:
+	
+	* On Success: khi thành công thì sẽ làm gì tiếp.
+		+ Go to the next step: thực hiện tiếp các bước sau đã được khai báo (mặc định).
+
+	* On Failure: khi thất bại thì sẽ làm gì tiếp.
+		+ Quit the job reporting failure: không thực hiện tiếp các bước sau đã được khai báo (mặc định).
+
+---------------------------------------------
+
+[SCHEDULE]
+
+// Chạy job thủ công
+** Chạy thủ công: Tên Server -> SQL Server Agent -> Jobs -> Tên job đã tạo -> Start Job at Step
+
+// Tạo lịch sao lưu tự động
+** Tạo lịch tự động: Tên Server -> SQL Server Agent -> Jobs -> Tên job đã tạo -> Chuột phải, chọn Properties -> Select a page: Schedules -> New -> Hộp thoại New Job Schedule được hiển thị
+	- Name: đặt tên cho lịch, ví dụ: LichSaoLuu357.
+	- Schedule type:
+		+ Start automatically when SQL Server Agent starts: được thực hiện (một lần duy nhất) mỗi khi SQL Server Agent được khởi động.
+		+ Start whenever the CPUs become idle: chạy mỗi khi CPU rảnh rỗi, dưới 10% trong liên tục 10 phút (mặc định).
+		+ Recurring: được chạy lặp lại liên tục theo chu kỳ thời gian.
+		+ One time: chỉ chạy duy nhất một lần, chọn ngày-tháng-năm và giờ-phút-giây duy nhất một lần.
+
+---------------------------------------------
+
+[CHỈNH PHẦN TRĂM VÀ THỜI GIAN RẢNH CỦA CPU]
+
+** Chỉnh điều kiện rảnh rỗi của CPU: Tên Server -> SQL Server Agent -> Chuột phải, chọn Properties -> Select a page: Advanced
+
+* Idle CPU condition:
+	- [✓] Define idle CPU condition
+	- Average CPU usage falls below: mật độ sử dụng CPU thấp theo ngưỡng, ví dụ: 30%.
+	- And remains below this level for: và duy trì mật độ đó trong khoảng thời gian tính theo giây (600 giây = 10 phút), ví dụ 300 seconds.
+
+---------------------------------------------
+
+[GỬI THÔNG BÁO CHO OPERATOR KHI JOB HOÀN THÀNH]
+
+** Chỉnh thông báo cho Job: Tên Server -> SQL Server Agent -> Jobs -> Tên job đã tạo -> Chuột phải, chọn Properties ->  Select a page: Notifications
+	- Actions to perform when the job completes:
+		+ Email: 
+			* Chọn một Operator để nhận thông báo qua email.
+			* Gửi thông báo qua email khi job hoàn thành (thành công và thất bại đều gửi).
+
+---------------------------------------------
+
+[ALERT]
+
+** Tạo mới Alert với điều kiện: Tên Server -> SQL Server Agent -> Alerts -> New Alert -> Select a page: General
+	- Name: AlertDieuKienHoatDong | AlertCoLoi
+	- Type:
+		+ SQL Server event alert: theo sự kiện.
+		+ SQL Server perfomance condition alert: theo điều kiện hoạt động.
+		+ WMI event alert: 
+
+* Perfomance condition alert definition:
+	- Object:
+		+ SQLServer:Databases
+	- Counter:
+		+ Data File(s) Size (KB)
+	- Instance:
+		+ Northwind (chỉ có duy nhất 1 file .mdf)
+	- Alert if counter: điều kiện
+		+ rises above: nếu lớn hơn hoặc bằng.
+		+ Value: số Kilobyte (kB) để kích hoạt Alert.
+
+-----------------------
+
+** Tạo mới Alert với lỗi: Tên Server -> SQL Server Agent -> Alerts -> New Alert -> Select a page: General
+	- Name: AlertCoLoi
+
+* Event alert definition:
+	- Database name: chọn CSDL cụ thể, ví dụ: <all database>
+	- Alerts will be raised based on:
+		+ Error number (mã lỗi): 30006
+		+ Severity (độ nghiêm trọng): có tổng cộng 25 mức độ.
+			017 - Insufficient Resources (không đủ tài nguyên)
+	- [] Raise alert when message contains: được kích hoạt khi thông báo của hệ thống có chứa từ khoá được liệt kê trong [Message text].
+
+-----------------------
+
+** Cấu hình thông báo khi Alert được kích hoạt: Select a page: Response
+
+* Thông báo cho Operator:
+	- [✓] Notify operators: gửi thông báo cho các Operator.
+	- Operator list: danh sách các Operator hiện có trong hệ thống.
+		+ [✓] E-mail: gửi thông báo qua email.
+
+* Kích hoạt Job:
+	- [✓] Execute job: chọn Job đã chuẩn bị sẵn từ trước.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

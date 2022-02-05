@@ -1,0 +1,178 @@
+﻿[CHƯƠNG 02: CÀI ĐẶT HỆ QUẢN TRỊ CƠ SỞ DỮ LIỆU]
+
+==========================================================================
+
+I. Lập kế hoạch cài đặt Microsoft SQL Server 2008:
+
+	1. Mục đích cài đặt: phục vụ học tập, hoạt động kinh doanh,...
+
+--------------------------------------------
+
+	2. Lựa chọn phiên bản cho loại máy tính:
+
+		* Chỉ phục vụ cho Server, đa phần khác nhau về hỗ trợ phần cứng: Windows Server, Windows Datacenter, Windows Advanced Server...
+
+			// Tuỳ serial key mà sẽ có những phiên bản tương ứng được cài đặt
+			- Enterpise: quy mô lớn nhất
+			- Standard:
+			- Workgroup:
+			- Web: một trường hợp đặc biệt.
+
+
+		* Phục vụ cho máy tính cá nhân (PC) lẫn Server: Windows 7, Windows 10, Windows Server,...
+
+			- Developer: quy mô nhỏ, dành cho các nhà phát triển phần mềm với đầy đủ các chức năng nhưng hỗ trợ phần cứng vẫn có hạn chế.
+
+			- Express: quy mô nhỏ nhất, công khai miễn phí trên Internet thông qua trang chủ của Microsoft và không phát hành đĩa vật lý. Cho người dùng sử dụng thử với mục đích học tập, nghiệm cứu nên sẽ bị hạn chế về tính năng, không đủ chức năng để hoạt động qua mạng LAN (Client/Server), cài trên máy nào thì sẽ là Server phục vụ cho các ứng dụng chạy trên trong máy đó, và hạn chế khả năng hỗ trợ phần cứng. Tự động được cài kèm theo khi cài đặt Visual Studio.
+
+--------------------------------------------
+
+	3. Điều kiện về phần cứng (RAM, CPU): là hệ quản trị tốn tài nguyên. Những phiên bản cũ có bảo mật kém (1998) và tiêu tốn tài nguyên (2000). Những phiên bản về sau dần ổn định hơn (2005), có hỗ trợ ngôn ngữ truy vấn tích hợp LINQ (2008), hỗ trợ cho lập trình di động (2012, 2014)
+
+--------------------------------------------
+
+	4. Điều kiện về phần mềm:
+		- Hệ điều hành: Windows Server, Windows 11,...
+		- Collation: độ tương thích về đa ngôn ngữ khi lưu trữ dữ liệu cho từng ô trong bảng (table), ví dụ: tiếng Ả Rập, Thái, Hàn, Nhật, Trung,..., được sử dụng để lưu trữ, hiển thị, sắp xếp,... sao cho đúng nhất. Chọn collection mặc định: 
+
+--------------------------------------------
+
+	5. Xác định cách tổ chức ổ đĩa cài đặt và lưu trữ dữ liệu:
+
+	Một cơ sở dữ liệu của SQLS gồm 2 loại file (đang hoạt động, cần sử dụng): data file (có thể có nhiều) và log file (chỉ có một).
+
+	Tổ chức ổ đĩa và lưu trữ dữ liệu sao cho tối ưu nhất: một Server có thể có rất nhiều ổ cứng, được tận dụng và tập hợp thành các nhóm (RAID) để tăng tốc độ, bộ an toàn cho dữ liệu khi bị hỏng ổ cứng.
+
+--------------------
+
+		- RAID 1 - Disk mirroring (Từng cặp đĩa là bản sao của nhau, đảm bảo an toàn dữ liệu):
+			+ Cần tối thiểu 2 ổ cứng.
+
+			+ Dữ liệu được ghi vào 2 ổ giống hệt nhau (Mirroring).
+				+ Lưu log file.
+				+ Lưu hệ điều hành.
+				+ Lưu SQL.
+					-> Vì những loại file này dung lượng để lưu trữ không tốn nhiều nhưng lại cần sự an toàn hơn là tốc độ.
+
+			+ Dung lượng: chỉ tận dụng được (mất) 50% tổng dung lượng ổ đĩa (bằng dung lượng của ổ đơn).
+
+			+ Tốc độ đọc tăng gấp n lần (xn), tốc độ ghi không đổi.
+
+				Ví dụ: nguyên 1 khối dữ liệu được lưu đồng thời vào 2 ổ đĩa khác nhau, 1 dữ liệu được lưu 2 lần, tốn 2 lần dung lượng lưu trữ. Tốc độ ghi vẫn giữ nguyên (như 1 ổ đơn) nhưng tốc độ tái tạo (đọc) được tăng gấp đôi do lúc này dữ liệu được chia thành 2 phần bằng nhau và mỗi ổ đĩa đảm nhận việc tái tạo 1 phần.
+
+--------------------
+
+* Vạch: 1 cặp đĩa (gồm 2 ổ cứng).
+
+		- RAID 0 - Disk striping (Lưu theo vạch/phần đĩa, song song, nhanh):
+			+ Cần tối thiểu 2 ổ cứng.
+
+			+ Dữ liệu sẽ được chia ra nhiều phần bằng nhau.
+
+			+ Dung lượng: tận dụng được 100% tổng dung lượng ổ đĩa.
+
+			+ Tốc độ đọc & ghi tăng gấp n lần (xn) - nhanh nhất.
+
+			+ Nhược điểm: không chịu được hư hỏng, 1 ổ cứng bị hư thì toàn bộ dữ liệu được lưu đồng thời ở những ổ cứng khác sẽ trở nên vô nghĩa vì không còn khả năng tái tạo lại dữ liệu.
+
+				Ví dụ: nếu có 1 khối dữ liệu và 3 ổ cứng, khối dữ liệu đó sẽ được chia thành 3 phần bằng nhau, mỗi phần sẽ đồng thời được lưu vào 1 ổ cứng. Tốc độ ghi tăng gấp 3 lần, tốc độ đọc để tái tạo dữ liệu cũng tăng gấp 3 lần.
+
+--------------------
+
+		- RAID 5 - Parity stripe (Cải tiến của RAID 0, cung cấp cơ chế khôi phục dữ liệu)
+			+ Cần tối thiểu 3 ổ cứng, các ổ cứng phải cùng dung lượng.
+
+			+ Các Parity dùng để khôi phục dữ liệu được phân bố đồng đều trên tất cả các ổ đĩa cứng.
+
+			+ Dung lượng: mất 1/n tổng dung lượng ổ đĩa (mất 1 và chỉ 1).
+
+			+ Tốc độ đọc bị giảm đi một chút.
+
+			+ Ưu điểm: An toàn như RAID 1 nhưng tốc độ gần giống RAID 0. Ví dụ có 3 ổ đĩa, khi 1 ổ bị hư và tiến hành thay mới thì 2 ổ đĩa còn lại sẽ chạy một giải thuật tái tạo dữ liệu để tự động sinh dữ liệu cho ổ đĩa thứ 3 mới được thay.
+				-> Có khả năng chịu được và tái tạo dữ liệu khi 1 ổ đĩa bị hư.
+
+				Ví dụ: 1 khối dữ liệu lớn, trước khi được chia cho 3 ổ cứng thì sẽ đi qua giải thuật parity, giải thuật này sẽ chia khối dữ liệu gốc thành 3 khối (tương ứng với 3 ổ đĩa) với dung lượng nhỉnh hơn khối dữ liệu gốc (vì phải đính kèm thuật toán). Khi tái tạo, mỗi ổ cứng sẽ chạy giải thuật Giải parity để tái tạo lại thành khối dữ liệu ban đầu.
+
+--------------------
+
+		- RAID 1+0 - Mirroring + Striping:
+			+ Cần tối thiểu 4-6 ổ cứng.
+
+			+ Lưu data file.
+
+			+ Dung lượng: mất 50% dung lượng.
+
+			+ Tốc độ ghi tăng n (vạch) lần, ví dụ: 6 ổ cứng, 3 vạch, tăng 3 lần.
+
+			+ Tốc độ đọc tăng n (ổ đĩa) lần / 2*n (vạch) lần, ví dụ: 6 ổ cứng, 3 vạch, tăng 6 lần.
+
+			+ Ưu điểm: đọc & ghi nhanh, chịu được hư ổ cứng khi trong mỗi ổ đĩa trong từng cặp bị hư.
+
+				Ví dụ: có 1 khối dữ liệu và 6 ổ cứng, 6 ổ cứng sẽ được tổ chức thành 3 vạch (mỗi vạch là 1 nhóm gồm 2 ổ cứng). Khi ghi thì dữ liệu sẽ được lưu song song vào 1 vạch (giống RAID 1). Khi đọc thì cả 2 ổ đĩa của 1 vạch sẽ cùng tái tạo dữ liệu (gióng RAID 0).
+
+--------------------------------------------
+
+	6. Xác định các instance sẽ cài đặt:
+
+		* Instance (thể hiện): lên kế hoạch/đang cài một Server mới thì được gọi là instance, nhưng khi cài xong rồi/có thể sử dụng được rồi thì được gọi là Server và có Server Name + Instance Name. Mỗi Database Server sau khi cài xong sẽ cho ra ít nhất một cặp dịch vụ chạy ngầm (SQL Server và SQL Server Agent).
+			-> Là Database Server (SQL Server) đang trong quá trình cài, cài xong sẽ được gọi là Server.
+
+			Ví dụ: nhà đang xây được gọi là công trình, nhưng khi xây xong rồi thì được gọi là nhà.
+
+		Khi sử dụng thực tế thì chỉ sử dụng Server Name, Instance Name chỉ dùng để xem lại dấu tích cài/nguồn gốc của Server.
+
+		* Database Engine: là một trong nhiều loại dịch vụ, là dịch vụ chính giúp quản lý và cung cấp xử lý dữ liệu cho các truy vấn/kết nối (Agent Service là dịch vụ song song để chạy các tác vụ tự động hoá).
+			-> Mục đích chính khi cài SQLS.
+
+		* Microsoft SQL Server Management Studio (MSSMS) cho phép quản lý nhiều Database Server (SQL Server) với tên khác nhau trên cùng một máy tính. Trong mỗi Server sẽ có nhiều cơ sở dữ liệu khác nhau, hệ thống quản lý người dùng khác nhau.
+
+--------------------
+
+		* Có thể cài đặt:
+			- Không có hoặc chỉ có một default instance: sau khi cài xong, tên của Server sẽ trùng với tên của máy tính.
+				-> Instance Name: MSSQLServer | Server Name: Tên-máy-tính
+
+			- Nhiều named instance: người dùng phải đặt tên cho Instance.
+				-> Instance Name: Tên-Instance | Server Name: Tên-máy-tính\Tên-Instance
+
+==========================================================================
+
+II. Kết quả sau khi cài đặt:
+
+Sau cài xong, Server sẽ tạo ra một số CSDL mặc định thuộc về hệ thống: Master, Model, MSDB, TempDB, Resource.
+
+Một CSDL trong SQLS được lưu thành nhiều tập tin, giúp lưu được trên nhiều ổ cứng để chạy đồng thời và tăng tốc độ.
+
+--------------------
+
+Khi mới tạo ra, ví dụ: CSDL MyDB, sẽ có 2 file chính với tên mặc định là MyDB.ldf và MyDB.mdf. Các tập tin do người dùng tạo sẽ có tên là MyDB.ndf.
+
+	- log data file (ldf): lưu thông tin hoạt động của CSDL.
+
+	- primary data file (mdf): là file lưu dữ liệu, tự động có mà không cần tạo.
+
+	- secondary data file (ndf) là file lưu dữ liệu, do người dùng tạo và có thể tạo nhiều file.
+
+==========================================================================
+
+III. Thực hiện cài đặt SQLS2008 phiên bản Express/Developer/Standard/Enteprise:
+
+==========================================================================
+
+IV. Lựa chọn ở các bước trong quá trình cài đặt:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

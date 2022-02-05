@@ -1,0 +1,85 @@
+﻿[CHƯƠNG 07: GIAO TIẾP DỮ LIỆU QUA MẠNG MÁY TÍNH (MẠNG LAN)]
+
+=========================================================================
+
+[GIAO THỨC KẾT NỐI]
+
+Cơ chế hoạt động của SQL Server là thông qua mạng LAN vì người dùng chỉ tương tác với Website, Website giao tiếp với Web Server (Web Server tạo giao diện Web và hiển thị cho người dùng), Web Server được nối với Database Server thông qua mạng LAN (Database Server phục vụ cho một Server khác thông qua mạng LAN).
+	-> Những chức năng cơ bản đều hoạt động trên mạng LAN thông qua cơ chế Client-Server.
+
+---------------------------------------------
+
+** Cấu hình SQL Server Network Communication:
+
+
+* Giữa máy Client và Server trong cùng mạng LAN (có thể cùng là 1 máy tính), SQL Server 2008 hỗ trợ 4 giao thức để Client và Server có thể truyền thông:
+
+	- Shared Memory: giao thức truyền dữ liệu trong trường hợp duy nhất khi Client và Server là cùng 1 máy, không sử dụng qua mạng LAN, được sử dụng để truyền dữ liệu trong nội bộ máy tính (ứng dụng cài trên Server cần giao tiếp với Server) thay vì sử dụng giao thức TCP/IP để truyền qua mạng LAN. Tốc độ tức thời vì gần như không phải tốn thời gian để truyền.
+
+	- TCP/IP: giao thức truyền dữ liệu trong mạng LAN và Internet phổ biến nhất, cân bằng giữa bảo mật và tốc độ. Vẫn có thể sử dụng khi Client và Server nằm trên cùng 1 máy nhưng không khuyến khích, trừ khi ứng dụng được viết không hỗ trợ Shared Memory.
+
+	- Named Pipes: tốc độ nhanh nhưng bảo mật không cao bằng TCP/IP, sử dụng để truyền những dữ liệu lớn giữa Server với Server, thường sử dụng xong sẽ tắt.
+
+	- Virtual Interface Adapter (VIA): không còn được sử dụng, giao thức sử dụng trong việc máy Server phải tương tác với những máy Client chạy hệ điều hành đã cũ (từ Windows Millennium Edition - 2000 trở về trước).
+
+Giao thức mặc định là TCP/IP và Shared Memory
+
+---------------------------------------------
+
+Ứng dụng (phần mềm) có 2 loại kiến trúc: 32-bit và 64-bit.
+	-> Hệ điều hành 64-bit có thể chạy tốt cả 2 loại này.
+
+SQL Server là 64-bit nhưng các công cụ kèm (Client) theo đều là 32-bit (SQL Server Management Studio,...).
+
+---------------------------------------------
+
+Cả Server và Client đều có cả 4 giao tiếp, để chọn được cặp giao thức tối ưu và mong muốn thì ta cần phải chỉnh thứ tự ưu tiên ở phía Client (bên Server chỉ được phép bật hoặc vô hiệu hoá, không được đặt thứ tự).
+
+Sử dụng SQL Server Configuration Manager để chỉnh thông số ở phía Client. Thông thường thì máy Client sẽ không có SQL Server Configuration Manager nhưng vẫn có thể kết nối với Server một cách bình thường thông qua giao thức TCP/IP, nếu cài thêm Client Tools thì có thể khai thác được hết chức năng của hệ quản trị.
+
+
+** Xem và cấu hình giao thức: sử dụng SQL Server Configuration Manager để điều chỉnh giao thức cho cả Server và Client.
+
+
+* SQL Server Services: hiển thị trên máy hiện đang có bao nhiêu dịch vụ và trạng thái (đang chạy hoặc bị dừng,...) của từng dịch vụ. Mỗi instance sẽ cho ra 1 cặp dịch vụ (Server và Server Agent).
+
+Mỗi lần điều chỉnh giao thức trên Server thì phải khởi động lại Server (Database Engine Service), trên Client không có cài dịch vụ nên không cần phải khởi động lại.
+
+-----------------------
+
+* SQL Server Network Configuratio: liệt kê các Instance (Server) được cài trên máy với kiến trúc 32-bit. Chỉ cho phép Enabled hoặc Disabled.
+
+* SQL Native Client Configuration: Client với kiến trúc 32-bit. Cho phép Enabled hoặc Disabled và chỉnh thứ tự ưu tiên (Order) với Shared Memory mặc định sẽ là 1 nếu Enabled cho các ứng dụng chạy ở phía Client.
+
+=========================================================================
+
+[ALIAS - BÍ DANH]
+
+
+Alias Server			SQL Server
+(Server ảo)			(Server thật)
+
+
+Alias Server: phải tạo trên máy Client (không liên quan đến Server), là một Server ảo dùng để đặt tên cho một Server thật với một tên bất kỳ (bí danh), kết nối thông qua mạng LAN và sử dụng giao thức TCP/IP.
+
+Trong lập trình CSDL, để kết nối vào trong một CSDL cần phải truyền tên Server (tên của SQL Server, tên duy nhất trên máy Server) và tên CSDL vào Connection String. Khi một máy Server bị hư thì tên Server sẽ không thể sử dụng được, mà cũng không thể thay đổi vì Connection String nằm trong code của lập trình và sau khi biên dịch thì đoạn code này sẽ không thể đọc được. Lúc này, nếu có sử dụng Alias Server thì người dùng có thể tuỳ thích trỏ thuộc tính (property) đến bất kỳ một Server nào trên mạng LAN và phần mềm chạy phía Client sẽ không cần phải quan tâm về tên Server nữa.
+
+		Connection String		Trỏ thuộc tính
+Ứng dụng (Client)----------------> Alias Server---------------> Tên Server 1
+					|
+					|
+					----------------------> Tên Server 2
+				Thay đổi tên Server khi cần
+
+
+=> Tất cả những ứng dụng gọi Alias Server bằng Alias Name thì sẽ được tự động được chuyển tiếp (forward) sang SQL Server (Server thật được khai báo trong thuộc tính).
+
+---------------------------------------------
+
+Alias Name: tên ảo, có thể đặt tuỳ thích. -> Đưa tên này cho lập trình viên sử dụng.
+
+Server: tên thật của Server.
+
+
+
+

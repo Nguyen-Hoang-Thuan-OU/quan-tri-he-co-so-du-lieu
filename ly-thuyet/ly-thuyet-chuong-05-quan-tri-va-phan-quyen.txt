@@ -1,0 +1,307 @@
+﻿[CHƯƠNG 05: QUẢN TRỊ VÀ PHÂN QUYỀN NGƯỜI DÙNG]
+
+=========================================================================
+
+I. Ý nghĩa, ý thức về bảo mật
+
+Các kỹ thuật, biện pháp bảo mật về mặt công nghệ đến thời điểm hiện tại đã rất tiên tiến, nhưng ý thức về bảo mật của người quản trị hệ thống vẫn chưa tốt khiến vẫn còn nhiều lỗ hổng.
+
+Thà cấp thiếu quyền vẫn hơn là cấp thừa quyền.
+
+Phòng bệnh hơn chữa bệnh, dự trù các nguy cơ có thể xảy ra đối với dữ liệu thay vì khác phục hậu quả.
+
+=========================================================================
+
+II. Hai mode kiểm soát đăng nhập - Thay đổi mode sau khi cài đặt:
+
+Trong quá trình cài đặt, có thể chọn Windows mode hoặc Mixed mode.
+	- Windows mode: Domain Account và Windows Local User.
+		-> Loại người dùng có nguồn gốc từ hệ điều hành Windows, do hệ điều hành xác thực.
+
+	- Mixed mode: Domain Account, Windows Local User và SQL Login.
+		-> Cho phép đăng nhập bằng sa, một loại tài khoản mặc định thuộc nhóm system admin (quyền cao nhất), do SQL Server tự tạo và quản lý.
+
+=========================================================================
+
+III. Sơ đồ kiến trúc về bảo mật và phân quyền người dùng:
+
+Trên mạng LAN sẽ bao gồm nhiều máy tính ca nhân (PC), Domain Controller (DC) cài HĐH Windows Server chứa danh sách các Domain Account, Database Server cài HĐH Windows Server và các hệ quản trị CSDL.
+
+----------------------------------------
+
+** Các loại tài khoản người dùng:
+	- Domain Account: tài khoản người dùng do DC cấp và quản lý.
+	- Windows Local User: tài khoản người dùng do hệ điều hành Windows quản lý.
+	- SQL Login: tài khoản người dùng do SQL Server tạo và quản lý.
+
+----------------------------------------
+
+** User Group: trong hệ điều hành Windows có chia nhóm của các người dùng, giúp cho việc gán quyền trở nên nhanh-gọn-lẹ hơn theo nhóm thay vì gán cho từng cá nhân, các thành viên trong cùng một User Group sẽ có chung một quyền và đều bị ảnh hưởng nếu có sự thay đổi.
+	- Administrators:
+	- Power User:
+	- ...
+(Trong SQL Server, User Group được gọi là Server Role)
+
+----------------------------------------
+
+** Để truy cập thành công vào SQL Server và tương tác với HQT CSDL:
+	Bước 01: Xác thực đăng nhập.
+		* Windows Authentication (Xác thực bởi hệ điều hành):
+			- Windows Local User: cấu trúc Tên-máy-tính\Tên-tài-khoản-người-dùng (không yêu cầu nhập mật khẩu của tài khoản khi đăng nhập vào SQL Server).
+			- Domain Account: cấu trúc Tên-domain\Tên-tài-khoản-domain (không yêu cầu nhập mật khẩu của tài khoản khi đăng nhập vào SQL Server).
+
+		* SQL Server Authentication (Xác thực bởi SQL Server):
+			- SQL Login: cấu trúc Tên-người-dùng (có thể yêu cầu nhập mật khẩu của tài khoản khi đăng nhập vào SQL Server).
+
+	=> Bất kể loại xác thực đăng nhập nào, nếu đăng nhập thành công về hệ điều hành và có tên trong danh sách người dùng được phép đăng nhập của SQL Server thì sẽ vào được SQL Server.
+
+	Bước 02: Xác thực phân quyền.
+		- Quyền thực hiện các hoạt động quản trị toàn bộ SQL Server (không phải quản trị dữ liệu - Server Roles): tạo mới và gán quyền người dùng, sao lưu và phục hồi,...
+
+			* Gán quyền (Security > Logins > Properties):
+				- Trực tiếp (Securables > Permissions > Explicit): gán quyền trực tiếp (cho phép hoặc cấm) thực hiện từng hành động nào đó.
+					+ Grant: gán quyền.
+					+ With Grant (đã bao gồm Grant): người dùng được phép gán lại cho những người dùng khác những quyền mà họ đã từng được gán.
+					+ Deny: cấm quyền, cấm tường minh, dù người dùng có được thêm vào role sysadmin cũng sẽ không có quyền.
+
+				- Gián tiếp (Server Roles > Server roles): gán vào danh sách Server Role có sẵn (8-9 Fixed Server Role), tuỳ vào role đã được gán mà thành viên sẽ có những quyền khác nhau (User Group).
+
+			(Gán quyền từ chối cũng là một dạng quyền và có độ ưu tiên cao hơn)
+
+------------------------
+
+		- Quyền quản lý trong phạm vi từng CSDL (quản trị dữ liệu - Database Roles). Phải được khai báo là một Database User, phải được gán quyền gì đó trước với CSDL (xem-thêm-sửa-xoá). Khi đăng ký, Microsoft cho phép những Database User đã xác thực đăng nhập thành công đổi tên khi đăng ký thành viên (tên sau khi Login và tên hiển thị trên Database User có thể khác nhau).
+			* Gán quyền (Security > Logins > Properties):
+				- Trực tiếp (User Mapping): gán trực tiếp vào CSDL những quyền xem-thêm-sửa-xoá.
+
+				- Fixed Database Roles (Database role membership): gồm 9-10 role chung/tổng quát, nhưng cho phép tạo thêm để phù hợp cho từng CSDL (User-defined Database Roles, không được trùng với tên mặc định có sẵn) chứ không cố định như Server Roles.
+					Ví dụ: role tên "Xem bảng KhachHang", gán quyền Read lên bảng KhachHang và thêm thành viên vào role.
+
+------------------------
+
+		- Quyền cho ứng dụng (Application Roles): bên cạnh quyền cho người dùng, phần mềm mà người dùng sử dụng cũng cần được cấp một số quyền để hoạt động ổn định/tận dụng tối đa sức mạnh của phần mềm.
+				Ví dụ: role tên "Bộ quyền dành cho phần mềm ABC", gán quyền cho phần mềm, không thêm thành viên mà thay vào đó sẽ đặt mật khẩu, thông báo cho lập trình viên của phần mềm biết mật khẩu và tên của CSDL, lập trình viên sẽ thêm vào Connection Strings quyền và tên role.
+
+=========================================================================
+
+IV. Principle: phần mềm, nhóm người, tiến trình (process),... có kết nối đến SQL Server (tất cả những đối tượng có tương tác với SQL Server)
+
+=========================================================================
+
+V. Login: người dùng của SQL Server (Microsoft tránh sử dụng từ User hoặc Account). Tên Login được gọi là "Login ID" (tương ứng với username)
+	* Có 2 cách tạo người dùng:
+		- Tạo bằng công cụ Management Studio: giao diện đồ hoạ để không phải viết code.
+		- Tạo bằng cách ngôn ngữ truy vấn T-SQL (Transact-SQL - chuyên phục vụ giao tác trong thương mại): những gì mà giao diện làm được thì code đều làm được.
+
+=========================================================================
+
+VI. Credential: sự uỷ quyền.
+
+Nếu Login với loại tài khoản SQL Login thì hệ điều hành sẽ không biết người dùng này là ai. Nếu tài khoản này cần chạy câu truy vấn nằm ở một Server khác hoặc cần lấy dữ liệu ở một máy tính khác trong mạng LAN, thì ta uỷ quyền cho tài khoản này với quyền của một tài khoản thuộc nhóm Windows Local User và Domain Account.
+
+=========================================================================
+
+VII. Server Role: quyền của người dùng trong Server.
+
+* Fixed Server Roles (Nhóm quyền cố định trên Server): 8 bộ quyền chính (không được đổi tên role, thêm mới role hoặc sửa đổi quyền) và 1 bộ quyền tuỳ chọn.
+
+	01. sysadmin: tương đương với User Group Administrators ở bên ngoài hệ điều hành Windows, quyền tối thượng (trong cả SQL Server và CSDL) và có thể thực hiện bất kỳ hành động nào. Mặc định, tất cả những người dùng Windows nằm trong User Group Administrators khi login vào SQL Server sẽ đều thuộc nhóm sysadmin.
+
+	02. serveradmin: có thể chỉnh thông số cấu hình và ngắt kết nối của Server.
+
+	03. securityadmin: quản lý đăng nhập người dùng (login), được quyền thay đổi và reset mật khẩu nếu cần thiết, quản lý các quyền GRANT, REVOKE và DENY trên Server và CSDL.
+
+	04. dbcreator: có quyền tạo, xoá, sửa và khôi phục CSDL.
+
+	05. diskadmin: có quyền quản lý file trong Server và CSDL.
+
+	06. processadmin: theo dõi, quản lý và kết thúc những tiến trình có tương tác với hoặc gây hại cho SQL Server.
+
+	07. setupadmin: thêm hoặc xoá một thành viên/instance/các liên kết của Server được tổ chức theo nhóm. Vì những Server lớn thường được gom thành một nhóm, lúc này, sẽ có một Server đứng ra làm đại diện để chỉ có một tên Server, Connection Strings duy nhất và nhiều Server ở phía sau liên kết lại với nhau.
+
+	08. bulkadmin: có thể thực hiện các thao tác import dữ liệu bằng câu lệnh BULK INSERT.
+
+	09. [Tuỳ chọn] public: mặc định được gán sẽ là public.
+
+=========================================================================
+
+VIII. Database User: người dùng đã Login và ghi danh vào trong CSDL, tên có thể khác với tên khi Login.
+
+=========================================================================
+
+IX. Fixed Database Role: người dùng đã Login và ghi danh vào trong CSDL.
+
+* Fixed Database Role (Nhóm quyền cố định trên CSDL): 9 bộ quyền chính (không được đổi tên role hoặc sửa đổi quyền) và 1 bộ quyền tuỳ chọn.
+
+	01. db_accessadmin: có thể thêm hoặc xoá các quyền Login.
+
+	02. db_backupoperator: được phép sao lưu CSDL.
+
+	03. db_datareader: có thể xem nội dung bên trong của tất cả các bảng.
+
+	04. db_datawriter: có thể thêm-sửa-xoá nội dung bên trong của tất cả các bảng.
+
+	05. db_ddladmin: có thể chạy được những câu lệnh định nghĩa dữ liệu (Data Definition Language - DDL), những câu lệnh làm thay đổi thiết kế của CSDL.
+
+	06. db_denydatareader: bị cấm xem dữ liệu của tất cả các bảng.
+
+	07. db_denydatawriter: có thể xem nếu được người khác gán nhưng bị cấm thêm-sửa-xoá dữ liệu của tất cả các bảng.
+
+	08. db_owner: quyền tối thượng trong phạm vi của chỉ một CSDL, quyền của CSDL này sẽ KHÔNG được áp dụng cho CSDL khác.
+
+	09. db_securityadmin: quản lý bảo mật trong CSDL.
+
+	10. [Tuỳ chọn] public: mặc định được gán sẽ là public.
+
+=========================================================================
+
+X. User-Defined Database Role: role trên CSDL do người dùng tự định nghĩa.
+
+=========================================================================
+
+XI. Application Role: quyền để cấp cho phần mềm.
+
+=========================================================================
+
+XII. Permission: quyền được hoặc không được phép thực hiện trên từng hành động đối với mức bảo mật thứ 2 (xác thực phân quyền), sau khi người dùng đăng nhập xong thì được hay không được phép thao tác gì trên CSDL.
+
+Permission phải được gán từ trước đó và sẽ được xét khi Login User thực hiện một hành động quản trị nào đó trên Server, hoặc Database User thực hiện một hành động nào đó trên dữ liệu trong CSDL.
+	-> Gán quyền cho Database Use.
+
+=========================================================================
+
+XIII. Server Permission
+
+=========================================================================
+
+XIV. Database Scope Permission
+
+[THỰC HÀNH]
+
+---------------------------------------------------------------
+
+[TẠO TÀI KHOẢN SQL LOGIN]
+
+01. Sử dụng tài khoản có quyền tối thượng để tạo, ví dụ: sa.
+
+02. Thao tác trong khu vực của sa: SQL Server -> Security (Server) -> Logins -> Chuột phải, New Login...
+
+03. Chọn giữa Windows authentication và SQL Server authentication
+	03.a. Windows authentication -> Search -> Tìm người dùng trong danh sách người dùng Windows -> Login name sẽ là tên của người dùng Windows (Tên-máy-tính\Tên-người-dùng-Windows).
+	03.b. SQL Server authentication -> Nhập thủ công tên muốn tạo vào Login name, mật khẩu tuỳ chọn hoặc bỏ trống.
+
+---------------------------------------------------------------
+
+[CẤP QUYỀN GIÁN TIẾP CHO TÀI KHOẢN ĐÃ ĐĂNG NHẬP VÀO SQL SERVER
+BẰNG FIXED SERVER ROLE]
+
+01. Sử dụng tài khoản có quyền tối thượng để gán quyền cho những tài khoản khác, ví dụ: sa.
+
+02. Thao tác trong khu vực của sa: SQL Server -> Security (Server) -> Logins -> Người dùng cần gán quyền -> Properties -> Server Roles -> Chọn quyền muốn gán, ví dụ: sysadmin.
+
+03. Chuột phải vào tên Server vừa mới được gán quyền -> Refresh -> Cập nhật lại bộ quyền mới nhất cho người dùng.
+
+---------------------------------------------------------------
+
+[CẤP QUYỀN TRỰC TIẾP CHO TÀI KHOẢN ĐÃ ĐĂNG NHẬP VÀO SQL SERVER
+BẰNG SECURABLES]
+
+01. Sử dụng tài khoản có quyền tối thượng để gán quyền cho những tài khoản khác, ví dụ: sa.
+
+02. Thao tác trong khu vực của sa: SQL Server -> Security (Server) -> Logins -> Người dùng cần gán quyền -> Properties -> Securables -> Search -> Hộp thoại "Add Objects" hiện ra
+	- Specific objects: hiển thị theo đối tượng.
+	- All objects of the type: hiển thị toàn bộ.
+	- The Server "Tên-máy-tính": những hành động liên quan đến CSDL.
+
+03. The Server "Tên-máy-tính -> Permissions -> Explicit -> Chọn một hành động cụ thể để gán quyền
+
+---------------------------------------------------------------
+
+[CHUYỂN LOGIN USER THÀNH DATABASE USER TRONG 1 BẢNG CSDL]
+
+01. Sử dụng tài khoản có quyền tối thượng để gán quyền cho những tài khoản khác, ví dụ: sa.
+
+02. Thao tác trong khu vực của sa: SQL Server -> Databases -> Tên CSDL -> Security (CSDL) -> Users -> New User
+
+03. User name: đặt tên cho Database User, có thể không cần giống với Login User.
+
+04. Login name -> Nút [Duyệt] -> Nhập tên Login User.
+
+------------------------
+
+[CẤP QUYỀN GIÁN TIẾP CHO DATABASE USER ĐỂ TƯƠNG TÁC VỚI CSDL
+BẰNG DATABASE ROLE MEMBERSHIP]
+
+01. Sử dụng tài khoản đã được trực tiếp chuyển thành Database User.
+
+02. Thao tác trong khu vực của sa: SQL Server -> Databases -> Tên CSDL -> Security (CSDL) -> Users -> Chọn Database User -> Properties
+
+03. Database role membership: chọn một trong các role sẵn có.
+
+------------------------
+
+[CẤP QUYỀN TRỰC TIẾP CHO DATABASE USER ĐỂ TƯƠNG TÁC VỚI CSDL
+BẰNG SECURABLES]
+
+01. Sử dụng tài khoản có quyền tối thượng để gán quyền cho những tài khoản khác, ví dụ: sa.
+
+02. Thao tác trong khu vực của sa: SQL Server -> Databases -> Tên CSDL -> Security (CSDL) -> Users -> Chọn Database User -> Properties -> Securables -> Search
+	- Specific objects: hiển thị theo đối tượng (Databases, Stored procedures, Tables, Views, Functions,...) -> Browse để chọn cụ thể.
+	- All objects of the type: hiển thị toàn bộ.
+	- All objects belonging to the schema: 
+
+03. Permissions for dbo.Tên-bảng-dữ-liệu -> Explicit -> Grant/With Grant/Deny.
+
+------------------------
+
+[CẤP QUYỀN CHI TIẾT CHO DATABASE USER
+THEO TỪNG CỘT TRONG CSDL BẰNG SECURABLES]
+
+01. Sử dụng tài khoản có quyền tối thượng để gán quyền cho những tài khoản khác, ví dụ: sa.
+
+02. Thao tác trong khu vực của sa: SQL Server -> Databases -> Tên CSDL -> Security (CSDL) -> Users -> Chọn Database User -> Properties -> Securables -> Chọn trước Permissions -> Column Permissions -> Chọn từng cột muốn cấp quyền.
+
+=========================================================================
+
+XV. SQL Server Encryption (chủ đề riêng)*
+
+=========================================================================
+
+XVI. Các lời khuyên, kinh nghiệm thực tế (Best Practices)
+
+01. Sử dụng mật khẩu mạnh: định nghĩa về mật khẩu mạnh giống như trong hệ điều hành Windows. Thường gồm từ 3-4 loại ký tự trở lên: chữ thường (a-z) + chữ hoa (A-Z) + ký số (chữ số, 0-9) + biểu tượng (ký hiệu đặc biệt, $#@). Số lượng ký tự thường từ 7-8 trở lên.
+
+02. Không một ai được phép đăng nhập vào tài khoản sa: không nên sử dụng, nếu có thì nên đăng xuất sau mỗi lần sử dụng hoặc đổi sang một tên khác để tránh kẻ tấn công tìm cách truy cập vào.
+
+03. Luôn dùng tài khoản với quyền thấp nhất, tương ứng với các dịch cần sử dụng trong SQL Server. Ví dụ: dùng tài khoản chỉ có duy nhất quyền tạo tài khoản để tạo tài khoản, muốn xem CSDL thì sử dụng tài khoản có duy nhất quyền xem CSDL...
+
+04. Phải thường xuyên chỉnh quyền cho người dùng hoặc phần mềm sử dụng SQL Server: trong một doanh nghiệp với quy mô lớn thì việc thay đổi nhân sự là chuyện thường xuyên, do đó để tránh việc dư quyền thì người quản trị cũng phải thường xuyên cập nhật lại quyền.
+
+05. Nên vô hiệu hoá hoặc xoá những giao thức mạng không sử dụng đến: trong SQL Server hỗ trợ 4 giao thức: TCP/IP, Shared Memory, Name Pipes và VIA, nhưng thường được sử dụng nhất là TCP/IP, nếu không có nhu cầu sử dụng thì nên vô hiệu xoá hoặc xoá cả 3 giao thức kia đi.
+
+06. Nên mã hoá trên đường truyền để bảo vệ gói tin: thời nay, tất cả các gói tin truyền trên mạng LAN đều đã được mã hoá.
+
+07. Đừng đặt máy SQL Server ở những nơi có độ an toàn thấp về mặt vậy lý: không được đặt máy ở những nơi nhiều người qua lại và dễ dàng thao tác ở mức vật lý với Server (phá, đánh cắp,...).
+
+08. Server nên được đặt ở những nơi kín: đặt ở những nơi không công khai, càng ít người thấy càng tốt.
+
+09. Nên xoá hoặc vô hiệu hoá những dịch vụ và phần mềm không cần thiết: trên máy Server không được cài những phần mềm không cần thiết, chỉ chạy những phần mềm phục vụ cho doanh nghiệp.
+
+10. Ưu tiên sử dụng Windows Authentication (Xác thực Windows Mode) nếu có thể: khi cài SQL Server sẽ có 2 chế độ Windows Mode (có 2 loại người dùng) và Mixed Mode (có 3 loại người dùng). Khuyến khích sử dụng Windows Mode vì tính bảo mật cao hơn vì lúc này người dùng chỉ có một con đường xác thực duy nhất để vào SQL Server đó là thông qua hệ điều hành. Để tránh trường hợp quản lý quyền không tập trung, một người có 2 loại tài khoản (Windows và SQL), dẫn đến việc cấp quyền không đồng đều giữa các tài khoản của cùng 1 người.
+
+11. Không nên mã hoá cột dữ liệu thường xuyên được tìm kiếm vì tốc độ truy xuất dữ liệu, sắp xếp sẽ vô cùng chậm.
+
+12. Sử dụng TDE để bảo vệ dữ liệu.
+
+13. Luôn sao lưu những key dùng để mã hoá.
+
+14. Hiểu vai trò của mình (người quản trị) trong chính sách bảo mật của công ty: là một nhân viên trong công ty thì bắt buộc phải tuân thủ theo quy định của công ty, làm hết sức trong khả năng và quy định của công ty cho phép, không được tự ý thay đổi quy định dù nó có tốt cho công ty đi nữa.
+
+=========================================================================
+
+
+
+
+
+
+

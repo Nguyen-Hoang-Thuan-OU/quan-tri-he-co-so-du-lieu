@@ -1,0 +1,6 @@
+﻿[CHƯƠNG 01: TỔNG QUAN VỀ QUẢN TRỊ HỆ CƠ SỞ DỮ LIỆU]
+
+** Có 3 cấp độ:
+	- Thiết kế CSDL.
+	- Lập trình CSDL.
+	- Quản trị CSDL.

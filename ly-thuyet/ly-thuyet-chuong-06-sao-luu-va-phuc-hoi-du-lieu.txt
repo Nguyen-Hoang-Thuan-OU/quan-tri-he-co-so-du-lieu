@@ -1,0 +1,463 @@
+﻿[CHƯƠNG 06: SAO LƯU VÀ PHỤC HỒI DỮ LIỆU]
+
+=========================================================================
+
+[SAO LƯU]
+
+* Nhiệm vụ chính của sao lưu: sao lưu định kỳ và thường xuyên, nhưng tần suất và kỹ thuật được áp dụng thì vẫn còn tuỳ vào mức độ quan trọng của dữ liệu.
+
+* Mục tiêu: để đảm bảo an toàn dù có thể không bao giờ phải phục hồi.
+
+* Backup Devices: ổ đĩa băng từ (ngày xưa) hay chuỗi chứa đường dẫn file lưu backup.
+
+---------------------------------------------
+
+[CÁC DẠNG SAO LƯU]
+
+** Các kiểu sao lưu:
+
+	01. Full Backup: sao lưu toàn bộ CSDL, bao gồm cả data file và log file. Tất cả các file sao lưu (dù có nhiều file) sẽ được gói thành một file .bak duy nhất, dung lượng sẽ được giảm đi rất nhiều so với dung lượng gốc của toàn bộ CSDL nhưng khi phục hồi thì toàn bộ dữ liệu và dung lượng sẽ khôi phục như ban đầu.
+
+Khi lưu trữ, chỉ lưu dữ những phần thật sự có dữ liệu và những phần trống sẽ được bỏ qua, sau đó áp dụng những kỹ thuật trộn-nén-mã hoá để dung lượng được nhỏ đi. Lưu thêm những thuộc tính (property) của file để khi phục hồi sẽ có thể phục hồi lại như ban đầu.
+
+File sao lưu .bak sẽ không giống với những file bình thường trên máy tính, không lưu đè (overwrite) file đã có mà sẽ lưu nối đuôi, phần vừa được lưu sẽ được nằm ngay phía sau phần đã lưu trước đó. Muốn ghi đè thì phải viết thêm dòng code "with format" hoặc "with init", nếu trên ổ cứng đã có file trùng tên thì hệ thống sẽ tiến hành ghi đè.
+
+Khi phục hồi cũng nên có kỹ thuật để chọn phần muốn phục hồi (vì file sao lưu được chia ra thành nhiều phần).
+
+--------------------------
+
+	02. Differential Backup: chứa những Page chứ có mã bị thay đổi trong một khoảng thời gian, dùng để sao lưu những sự khác biệt (nếu có) so với lần gần nhất thực hiện sao lưu full (không phải với lần sao lưu diff gần nhất). Sau khi sao lưu diff quá nhiều lần sẽ gây tốn dung lượng, lúc này chỉ cần sao lưu full. 
+
+	Microsoft sử dụng kỹ thuật đánh dấu bằng một loại Page chuyên dùng để đánh dấu những Page khác bị thay đổi, mỗi lần sao lưu full thì Page đánh dấu sẽ được xoá trống. Trong quá trình hoạt động (sao lưu full -> sao lưu diff), Page nào trong CSDL bị thay đổi nội dung hoặc tạo mới đều sẽ được lưu mã vào Page đánh dấu (Differential Changed Map - DCM).
+
+--------------------------
+
+	03. File/Filegroup Backup: sao lưu toàn bộ 1 file hoặc các file trong 1 filegroup (một nhóm gồm nhiều data file).
+
+--------------------------
+
+	04. File/Filegroup with Differential: sao lưu sự khác biệt của file đó so với lần gần nhất thực hiện sao lưu đầy đủ file.
+
+--------------------------
+
+	05. Transaction Log Backup: chỉ sao lưu log file, không sao lưu data file. Log file bị xoá trống sau mỗi lần sao lưu, log file sau sẽ chứa luôn thông tin của log file trước hoặc file sao lưu full.
+
+--------------------------
+
+	06. Partial Backup: là tên gọi, không phải kỹ thuật. Khi sao lưu không đầy đủ tất cả các file mà chỉ sao lưu một phần.
+
+--------------------------
+
+	07. Copy Only Backup: sao lưu dạng nghiệp dư bằng cách tách ra/ngắt kết nối (detach) CSDL đang hoạt động khỏi Server để copy file .mdf + .ldf và một số file khác vào thiết bị lưu trữ, sau đó sang một máy tính khác và gán lại (attach) vào Server. Hệ thống sẽ tự động ngắt và phục hồi kết nối, chỉ sao chép toàn bộ file chứ không hề xử lý khiến thời gian copy sẽ rất lâu, nhưng trong quá trình copy thì người dùng vẫn có thể sử dụng bình thường.
+
+---------------------------------------------
+
+[CÁC CHIẾN LƯỢC SAO LƯU]
+
+** Các chiến lược sao lưu cụ thể (Backup Strategies): khi nào cần phải sao lưu và sao lưu theo kiểu nào?
+
+01. Full Backup Only: sao lưu full vào một khung giờ cố định, tốn dung lượng lưu trữ và sức máy để thực thi hành động sao lưu, khoảng cách giữa những lần sao lưu càng xa thì rủi ro khi mất dữ liệu sẽ càng cao.
+	-> Khi khôi phục chỉ cần duy nhất 1 file sao lưu full.
+
+--------------------------
+
+02. Full Backup with Differential: sao lưu xen kẽ giữa full và diff, sao lưu full một lần và sao lưu diff nhiều lần. Khi phục hồi chỉ cần file sao lưu full gần nhất và file sao lưu diff gần nhất là có thể khôi phục lại được.
+	-> Khi khôi phục chỉ cần duy nhất 1 file sao lưu full và 1 file sao lưu diff.
+
+--------------------------
+
+03. Full Backup with Transaction Log: có sao lưu file log (lưu sự kiện và dữ liệu kèm theo) thì chế độ phục hồi bắt buộc phải là full hoặc bulk-logged vì simple không sử dụng file log để tái tạo lại hành động đã được ghi lại trong log file. Vì log file nhỏ và nhẹ nên có thể sao lưu liên tục theo giờ, log file sẽ được xoá trắng sau khi sao lưu, log file sau chứa thông tin của log file trước hoặc file sao lưu full, có thể tận dụng thêm sao lưu tail log để khôi phục lại trạng thái mới nhất của CSDL vì log file khó bị hư hơn data file.
+	-> Khi khôi phục chỉ cần duy nhất 1 file sao lưu full, 1 hoặc nhiều log file liên tiếp nhau và 1 file tail log.
+
+--------------------------
+
+04. Full and Differential Backup with Transaction Log: kết hợp xen kẽ giữa sao lưu full, diff và log file.
+	-> Khi khôi phục chỉ cần duy nhất 1 file sao lưu full, 1 file diff gần nhất (nếu file diff được lưu sau log file), các log file được lưu sau file diff (nếu có) và 1 file tail log.
+
+--------------------------
+
+05. File and Filegroup Backup: trong trường hợp nếu CSDL có những data thuộc vào filegroup read-only, khi sao lưu filegroup read-only thì chỉ cần sao lưu đúng một lần và những lần sau không cần phải sao lưu lại vì filegroup đang chứa những data file bị cấm thay đổi dữ liệu.
+
+---------------------------------------------
+
+[CÁC LỰA CHỌN KHI SAO LƯU BẰNG CÂU LỆNH]
+
+** Các lựa chọn khi thực hiện sao lưu (Backup Options): sử dụng câu lệnh.
+
+* Sao lưu chia vạch (Backup Stripe): sao lưu và đồng thời chia nhỏ dữ liệu thành các phần bằng nhau lên các phân vùng/ổ đĩa vật lý khác nhau, giúp tăng tốc độ sao lưu. Cần đủ tất cả các file để có thể phục hồi.
+
+BACKUP DATABASE TênCủaCSDL
+TO DISK='C:\StripedBackupsA\SmallWorksStripe1.bak'
+, DISK='C:\StripedBackupsB\SmallWorksStripe2.bak'
+, DISK='C:\StripedBackupsC\SmallWorksStripe3.bak'
+WITH DESCRIPTION = 'Sao luu chia vach';
+
+--------------------------
+
+* Tạo nhiều bảng sao lưu khác nhau (Mirrored Backup): phải chạy lệnh, không có visual tool, là chức năng mới trong SQL Server 2008. Vừa sao lưu vừa nhân bảng file sao lưu sang một phân vùng/ổ đĩa khác, nội dung của tất cả file đều giống nhau, mỗi file chưa đầu đủ phần sao lưu của CSDL. Khi CSDL hư thì chỉ cần một trong các file dữ liệu chứ không cần phải có tất cả các file.
+
+BACKUP DATABASE SmallWorks
+TO DISK='C:\MirroredBackupsA\SmallWorksMirror1.bak'
+MIRROR TO DISK='C:\MirroredBackupsB\SmallWorksMirror2.bak'
+WITH FORMAT, DESCRIPTION = 'Sao luu thanh nhieu ban sao';
+
+---------------------------------------------
+
+[CÁC TUỲ CHỌN VỚI WITH]
+
+** Sử dụng các tuỳ chọn sau từ khoá WITH:
+
+
+* WITH BLOCKSIZE = integer (kích thước): quy định dữ liệu của từng khối được ghi vào thiết bị lưu trữ là bao nhiêu byte. Chức năng này bây giờ đã được làm tự động.
+
+--------------------------
+
+* Checksum: giải thuật quét hết toàn bộ file để sinh ra chuỗi nhận dạng duy nhất, 1 bit bị thay đổi cũng làm ảnh hưởng đến chuỗi nhận dạng này.
+
+* WITH CHECKSUM: sau khi sao lưu xong thì file sao lưu sẽ chứa thêm thông tin checksum. Khi phục hồi, trước đó sẽ kiểm tra xem file sao lưu có còn nguyên vẹn/giống đến từng byte, từng bit như lúc mới sao lưu (có làm ảnh hưởng đến tốc độ phục hồi).
+
+* WITH NO_CHECKSUM: mặc định sẽ là NO_CHECKSUM nếu không ghi để tránh làm ảnh hưởng đến tốc độ.
+
+--------------------------
+
+* WITH STOP_ON_ERROR: khi sao lưu CSDL, nếu có lỗi xảy ra thì sẽ dừng quá trình sao lưu và thông báo lỗi. Được cài đặt mặc định.
+
+* WITH CONTINUE_AFTER_ERROR: khi sao lưu CSDL, nếu có lỗi xảy ra thì vẫn sẽ sao lưu tiếp và bỏ qua những phần bị lỗi (bad sector,...). Tỷ lệ phục hồi thành công sẽ thấp hơn vì trong quá trình sao lưu vốn đã xảy ra lỗi.
+
+--------------------------
+
+* WITH DESCRIPTION = string: đặt chuỗi ghi chú cho một file sao lưu (không phải toàn bộ), xem trong thuộc tính (property), độ dài tối đa 255 ký tự, không chấp nhận unicode.
+	Ví dụ: "File do NVA sao luu trong tinh huong khan cap".
+
+--------------------------
+
+* WITH DIFFERENTIAL: chỉ sao lưu sự khác biệt so với gần sao lưu full gần nhất, nếu không ghi thì sẽ là sao lưu full.
+
+--------------------------
+
+* WITH EXPIREDATE = datetime: file .bak sau khi sao lưu xong, đặt ngày hết hạn của file theo định dạng mm-dd-yyyy thì hệ điều hành sẽ không cho phép xoá/ghi đè file nếu như chưa đến ngày hết hạn và thông báo lỗi.
+
+* WITH RETAINDAYS = integer: để không phải tính ngày cụ thể thì có thể chọn mặc định sau bao nhiêu ngày thì hết hạn.
+
+--------------------------
+
+* WITH PASSWORD = string: đặt mật khẩu sao file sao lưu để khi phục hồi sẽ yêu cầu mật khẩu. Không nên sử dụng.
+
+--------------------------
+
+* WITH FORMAT: sử dụng trên máy tính, nếu file sao lưu chưa có thì tạo file mới, còn nếu đã có trên ổ cứng thì file đó sẽ bị ghi đè. Nếu không ghi (hoặc ghi NOFORMAT, NOINIT) thì mặc định lưu nối đuôi và dung lượng file sẽ tăng.
+
+* WITH INIT: sử dụng trên băng từ với ý nghĩa quay lại đầu cuộn băng.
+
+--------------------------
+
+* WITH NOSKIP: được chọn mặc định, khi sao lưu và chọn đường dẫn trùng với đường dẫn có sẵn, dù có cho phép ghi đè (WITH FORMAT/WITH INIT) nhưng nếu thời gian sử dụng chưa hết (EXPIREDATE/RETAINDAYS) thì sẽ báo lỗi.
+
+* WITH SKIP: bỏ qua thông tin hết hạn và tiến hành ghi đè.
+
+--------------------------
+
+* WITH MEDIADESCRIPTION = string: đặt miêu tả cho phương tiện lưu trữ, ví dụ: cho cả USB, đĩa DVD,... Giới hạn 255 ký tự.
+
+--------------------------
+
+* WITH MEDIANAME = string: đặt tên cho phương tiện lưu trữ, giới hạn 128 ký tự.
+
+--------------------------
+
+* WITH MEDIAPASSWORD = string: đặt mật khẩu cho phương tiện lưu trữ, phải nhập đúng thì mới cho phép phục hồi.
+
+--------------------------
+
+* WITH NAME = string: dùng để đặt tên cho cả bộ sao lưu vì khi sao lưu có thể cho nhiều file .bak.
+
+--------------------------
+
+* WITH NOREWIND: dùng cho ỗ đĩa băng từ, sau khi sao lưu xong sẽ ở yên tại chỗ.
+
+* WITH REWIND: dùng cho ỗ đĩa băng từ, sau khi sao lưu xong sẽ tua trở lại đầu băng.
+
+--------------------------
+
+* WITH NOUNLOAD: dùng cho ỗ đĩa băng từ, sau khi sao lưu xong sẽ không nhả băng ra khỏi ổ băng.
+
+* WITH UNLOAD: dùng cho ỗ đĩa băng từ, sau khi sao lưu xong sẽ nhả băng ra khỏi ổ băng.
+
+--------------------------
+
+* WITH RESTART: không có tác dụng gì.
+
+--------------------------
+
+* WITH STATS = percentage as integer: sau bao nhiêu phần trăm thì sẽ cập nhật số mới lên màn hình, ví dụ: 0, 10, 20, 30,..., tốn tài nguyên để tính toán. Trạng thái đang chạy/hoàn thành thường sử dụng trong những thao tác tốn thời gian và người dùng phải chờ.
+
+--------------------------
+
+* WITH COPY_ONLY: giả lập việc detach, copy và attach.
+
+=========================================================================
+
+[PHỤC HỒI]
+
+Sao lưu như thế nào thì phục hồi mới có thể như thế nấy, ví dụ: sao lưu đơn giản thì phục hồi cũng phải đơn giản vì file log (khi này chỉ chứa sự kiện) không thể tham gia vào quá trình phục hồi.
+
+* Tail log: khi dữ liệu bị hư thì log file tính từ lúc được lưu ở cuối cùng của file sao lưu (không chứa data) đến thời điểm bị hư được gọi là tail log. Khi được phục hồi thì SQL Server sẽ giả lập người dùng thực hiện lại những sự kiện kèm hành động đã được lưu.
+	-> Khi bị mất dữ liệu, trước khi tiến hành phục hồi cần phải sao lưu tail log trước vì nếu không thì tail log sẽ bị ghi đè mất.
+
+---------------------------------------------
+
+Chuẩn bị cho việc phục hồi dữ liệu:
+
+Thường có 3 bước:
+	1. Dùng SINGLE_USER mode (yêu cầu khi phục hồi CSDL master).
+	2. Sao lưu phần sau của transaction log (tail log) nếu dùng Full hay Bulk-Logged recovery mode. Mục đích để lưu các hoạt động mới nhất.
+	3. Tập hợp các bản backup cần thiết để phục hồi tới thời điểm mới nhất.
+
+---------------------------------------------
+
+** Một CSDL trong SQL Server sẽ có 3 kiểu phục hồi CSDL (Recovery models):
+
+	01. Simple: CSDL sẽ có log file nhỏ-nhẹ, log file chỉ lưu lại sự kiện/nhật ký (thông tin hoạt động chung) về những gì đã diễn ra/hoạt động trong CSDL nhằm phục vụ cho việc giám sát hệ thống nên sẽ không chứa dữ liệu.
+		Ví dụ: [Khoảng thời gian] Người dùng A đã thực hiện thêm 3 hàng dữ liệu vào bảng KhachHang. Khi phục hồi sẽ khôi phục lại được trạng thái dữ liệu giống như lúc đã sao lưu.
+
+		-> Sao lưu được gì thì phục hồi lại giống như vậy, những dữ liệu được thay đổi sau khoảng thời gian sao lưu sẽ bị mất, log file không thể tham gia vào quá trình phục hồi dữ liệu vì không lưu dữ liệu.
+
+--------------------------
+
+	02. Full: CSDL sẽ có log file rất nặng vì không những chỉ lưu sự kiện mà lúc này sẽ lưu cả dữ liệu đi kèm với sự kiện (chỉ lưu thêm-sửa-xoá, xem sẽ không được lưu).
+		Ví dụ: [Khoảng thời gian] Người dùng A đã thực hiện thêm 3 hàng dữ liệu vào bảng KhachHang, [Lưu thay đổi của cả 3 hàng dữ liệu vào log file].
+
+		-> Lúc này, log file sẽ chứa thêm dữ liệu (đã được mã hoá), log file sẽ tham gia vào quá trình phục hồi dữ liệu. 
+
+--------------------------
+
+	03. Bulk-logged: nằm ở giữa chế độ full và simple, dung lượng nhỏ hơn, lưu sự kiện kèm dữ liệu nhưng chỉ lưu những dữ liệu quan trọng (chỉ lưu được khoảng 90%).
+		-> Dung lượng giảm được không nhiều nhưng tỷ lệ phục hồi chỉ có 90%.
+
+---------------------------------------------
+
+** Khi bị hư dữ liệu sao lưu: không thể phục hồi đến thời điểm phía sau phần bị hư vì những phần phía sau có thể bao gồm những thao tác do phần bị hư tạo ra, ví dụ: file bị hư tạo mới 3 hàng dữ liệu, file nằm sau file bị hư xoá 2 trong 3 hàng do file bị hư tạo ra.
+
+---------------------------------------------
+
+[PHỤC HỒI BẰNG CÂU LỆNH]
+
+** Mẫu câu lệnh:
+
+RESTORE DATABASE | LOG database_name
+[File | FileGroup]
+[FROM <backup_media> [ ,…n ] ]
+[WITH
+[CHECKSUM | NO_CHECKSUM]
+[[,] FILE = file_number]
+[[,] MOVE 'logical_file_name' TO 'operating_system_file_name'] [,…n]
+[[,] RECOVERY | NORECOVERY | STANDBY = standby_file_name]
+[[,] REPLACE]
+[[,] STOPAT = date_time
+]
+
+---------------------------------------------
+
+** Phục hồi CSDL:
+
+
+* Phục hồi FILE: chỉ một file.
+
+RESTORE DATABASE SmallWorks
+FILE = 'SmallWorks_Data2'
+FROM DISK = 'C:\SQLBackups\SmallWorksFull.BAK';
+
+--------------------------
+
+* Phục hồi FILEGROUP: gồm một hoặc nhiều data file.
+
+RESTORE DATABASE SmallWorks
+FILEGROUP = 'SWUserData2'
+FROM DISK = 'C:\SQLBackups\SmallWorksFull.BAK';
+
+--------------------------
+
+* Phục hồi READ_WRITE_FILEGROUPS: những filegroup không phải read-only.
+
+RESTORE DATABASE SmallWorks
+READ_WRITE_FILEGROUPS
+FROM DISK = 'C:\SQLBackups\SmallWorksFull.BAK';
+
+--------------------------
+
+* Phục hồi PAGE: phục hồi ở mức Page, không cần quan tâm vì quá chi tiết.
+
+RESTORE DATABASE SmallWorks PAGE = '1:14'
+FROM = 'C:\SQLBackups\SmallWorksFull.BAK';
+
+--------------------------
+
+* Phục hồi RESTORE LOG: phục hồi từ log file, đọc log file và tác động vào CSDL để phục hồi cả CSDL (data file + log file) vì một CSDL không thể có 2 trạng thái/thời điểm data file và log file khác nhau.
+	-> Log file phục hồi được cả CSDL.
+
+RESTORE LOG SmallWorks
+FROM DISK = 'C:\SQLBackups\SmallWorksLog.BAK';
+
+---------------------------------------------
+
+[CÁC TUỲ CHỌN VỚI FROM]
+
+** Sử dụng các tuỳ chọn sau từ khoá FROM:
+
+
+* Từ ổ cứng trên máy:
+
+RESTORE DATABASE SmallWorks
+FROM DISK = 'C:\SQLBackUps\SmallWorksFull.BAK';
+
+--------------------------
+
+* Từ một máy tính khác trong mạng LAN:
+
+RESTORE DATABASE SmallWorks
+FROM DISK = '\\AughtFive\SQLBackUps\SmallWorksFull.BAK';
+--\\Tên máy tính trong mạng LAN\Thư-mục-được-chia-sẻ\Tập-tin-cần-sao-lưu.bak
+
+--------------------------
+
+* Phục hồi từ băng từ:
+
+RESTORE DATABASE Master
+FROM TAPE = '\\.\tape1';
+
+--------------------------
+
+* Sao lưu và phục hồi kiểu khẩn cấp: không xử lý để bỏ qua những dữ liệu rác, tạm,... trong quá trình sao lưu mà chỉ copy toàn bộ trạng thái vào file sao lưu.
+	-> Vẫn phục hồi được dữ liệu nhưng sẽ chứa dữ liệu rác và dung lượng sẽ rất lớn.
+
+FROM DATABASE_SNAPSHOT
+
+---------------------------------------------
+
+[CÁC TUỲ CHỌN VỚI WITH - SAO LƯU VÀ PHỤC HỒI]
+
+** Ví dụ sử dụng các tuỳ chọn với mệnh đề WITH:
+
+--------------------------
+
+* WITH CHECKSUM | NO_CHECKSUM: nếu khi backup có dùng checksum thì khi phục hồi mới có thể dùng checksum.
+
+--Sao lưu full, có dùng checksum
+BACKUP DATABASE SmallWorks
+TO DISK = 'C:\SQLBackups\SmallWorksCheckSumFull.BAK'
+WITH CHECKSUM;
+
+--Phục hồi full, có dùng checksum
+RESTORE DATABASE SmallWorks
+FROM DISK = 'C:\SQLBackups\SmallWorkCheckSumsFull.BAK'
+WITH CHECKSUM;
+
+--------------------------
+
+* WITH INIT/WITH FORMAT: khi sao lưu nếu file đã có sẵn thì dữ liệu sẽ được ghi đè.
+
+--Sao lưu full, ghi đè file nếu có để sao lưu
+BACKUP DATABASE SmallWorks
+TO DISK = 'C:\SQLBackups\SmallWorksBackups.BAK'
+WITH INIT, DESCRIPTION = 'Full Backup of SmallWorks';
+
+--------------------------
+
+* WITH DIFFERENTIAL: sao lưu sự khác biệt của cả CSDL so với lần sao lưu full gần nhất.
+
+--Sao lưu diff, nếu không có WITH DIFFERENTIAL nghĩa là sao lưu full
+--Sao lưu nối đuôi với phần full nên không có WITH INIT
+BACKUP DATABASE SmallWorks
+TO DISK = 'C:\SQLBackups\SmallWorksBackups.BAK'
+WITH DIFFERENTIAL, DESCRIPTION = 'Differential Backup of SmallWorks'
+
+--------------------------
+
+* WITH NO_TRUNCATE: cho biết đây là sao lưu tail log, nếu không ghi nghĩa là sao lưu log file bình thường. Trong SQL Server 2008, nếu muốn sao lưu tail log thì phải viết câu lệnh vì công cụ bị lỗi (lỗi phần mềm).
+
+--Sao lưu tail log
+--Sao lưu nối đuôi nên không có WITH INIT
+BACKUP LOG SmallWorks
+TO DISK = 'C:\SQLBackups\SmallWorksTailLog.BAK'
+WITH NO_TRUNCATE;
+
+--------------------------
+
+* WITH FILE (phần): sao lưu nhiều lần vào cùng 1 file .bak mà không chỉ rõ WITH INIT/WITH FORMAT thì mặc định sẽ là sao lưu nối đuôi, một file sẽ có nhiều phần và bắt đầu bằng 1 (ví dụ: sao lưu 10 lần sẽ ra được 10 phần), sử dụng WITH FILE để chỉ định phần muốn sử dụng để phục hồi.
+
+--------------------------
+
+* WITH RECOVERY | NORECOVERY: chỉ dùng RECOVERY đối với bản backup mới nhất nếu ta phục hồi từ nhiều bản backup, NORECOVERY nghĩa là sau khi phục hồi nhưng đừng vội tái tạo CSDL mà phải đợi vì còn nhiều file dữ liệu khác cần phục hồi.
+
+--Phục hồi phần thứ 1 - full và thông báo vẫn còn phần cần được phục hồi
+RESTORE DATABASE SmallWorks
+FROM DISK = 'C:\SQLBackups\SmallWorksBackups.BAK'
+WITH FILE = 1, NORECOVERY;
+
+--Phục hồi phần thứ 2 - diff và thông báo vẫn còn phần cần được phục hồi
+RESTORE DATABASE SmallWorks
+FROM DISK = 'C:\SQLBackups\SmallWorksBackups.BAK'
+WITH FILE = 2, NORECOVERY;
+
+--Phục hồi phần thứ 3 - tail log và tiến hành phục hồi mà không cần phải chờ nữa
+--Không cần sử dụng WITH NO_TRUNCATE để chỉ định đây là tail log vì ta đang phục hồi chứ không phải sao lưu
+RESTORE LOG SmallWorks
+FROM DISK = 'C:\SQLBackups\SmallWorksBackups.BAK'
+WITH File = 3, RECOVERY;
+
+--------------------------
+
+* WITH MOVE...TO...: một CSDL được lưu thành rất nhiều file và được rải trên nhiều ổ cứng khác nhau, nếu bị hư một ổ cứng thì CSDL sẽ bị mất đi file (data file) được lưu trên ổ cứng bị hư đó. Khi lấy file full ra để phục hồi thì sẽ gặp thông báo lỗi không tìm thấy ổ cứng chứa file.
+	-> Vừa phục hồi vừa dời file, dùng khi đã thay đổi đường dẫn file cần phục hồi trong trường hợp ổ cứng chứa file bị hư.
+
+RESTORE DATABASE SmallWorks
+FROM DISK = 'C:\SQLBackups\SmallWorksFull.BAK'
+
+--MOVE 'Tên luận lý' TO 'Đường dẫn vật lý mới'
+
+WITH MOVE 'SmallWorksPrimary' TO 'S:\SQLData\SmallWorks.mdf'
+
+, MOVE 'SmallWorks_log' TO 'T:\SQLLogs\SmallWorks_log.ldf'
+
+, MOVE 'SmallWorksData1' TO 'S:\SQLData\SmallWorksData1.ndf'
+
+, MOVE 'SmallWorksData2' TO 'S:\SQLData\SmallWorksData2.ndf'
+
+--------------------------
+
+WITH PARTIAL: chỉ ra rằng Primary filegroup và các user-defined filegroups
+nào cần phải phục hồi.
+
+--------------------------
+
+WITH REPLACE: chỉ ra các file sao lưu sẽ thay thế/ghi đè các file cần phục hồi.
+
+---------------------------------------------
+
+* Point-in-Time Restore (phục hồi ngay tức thì): vừa phục hồi, vừa kéo thời điểm phục hồi về quá khứ. Được sử dụng trong trường hợp phát hiện dữ liệu vừa nhập vào bị nhầm và muốn CSDL trở về thời điểm ngay trước khi nhập nhầm dữ liệu. Để sử dụng được, yêu cầu CSDL phải được tạo ra trong một khoảng thời gian đủ lâu và đã có thực hiện các thao tác thêm-sửa-xoá trong quá trình nhập liệu.
+	-> Trước khi có đợt nhập dữ liệu lớn thì nên sao lưu trước, không cần sử dụng cách này.
+
+* WITH STOPAT: phục hồi và tái tạo vào thời điểm được chỉ định.
+
+--Lấy file sao lưu full gần nhất để phục hồi và tái tạo lại dữ liệu trước một khoảng thời gian được chỉ định
+RESTORE DATABASE SmallWorks
+FROM DISK = 'C:\SQLBackups\SmallWorksFull1600.BAK'
+WITH STOPAT = '06/05/2006 14:59:00'
+,NORECOVERY;
+
+RESTORE LOG SmallWorks
+FROM DISK = 'C:\SQLBackups\SmallWorksLog1700.BAK'
+WITH STOPAT = '06/05/2006 14:59:00'
+,RECOVERY;
+
+
+
+
+
+
+
+
+
+
+
+

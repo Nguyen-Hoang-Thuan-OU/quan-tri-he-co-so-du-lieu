@@ -6,7 +6,7 @@
 
 * Nhiệm vụ chính của sao lưu: sao lưu định kỳ và thường xuyên, nhưng tần suất và kỹ thuật được áp dụng thì vẫn còn tuỳ vào mức độ quan trọng của dữ liệu.
 
-* Mục tiêu: để đảm bảo an toàn dù có thể không bao giờ phải phục hồi.
+* Mục tiêu: để đảm bảo an toàn cho dữ liệu dù có thể không bao giờ phải phục hồi.
 
 * Backup Devices: ổ đĩa băng từ (ngày xưa) hay chuỗi chứa đường dẫn file lưu backup.
 

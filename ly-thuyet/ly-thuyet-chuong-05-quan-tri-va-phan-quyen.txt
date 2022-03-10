@@ -19,17 +19,17 @@ Trong quá trình cài đặt, có thể chọn Windows mode hoặc Mixed mode.
 		-> Loại người dùng có nguồn gốc từ hệ điều hành Windows, do hệ điều hành xác thực.
 
 	- Mixed mode: Domain Account, Windows Local User và SQL Login.
-		-> Cho phép đăng nhập bằng sa, một loại tài khoản mặc định thuộc nhóm system admin (quyền cao nhất), do SQL Server tự tạo và quản lý.
+		-> Cho phép đăng nhập bằng sa (system admin), một loại tài khoản mặc định thuộc nhóm system admin (quyền cao nhất), do SQL Server tự tạo và quản lý.
 
 =========================================================================
 
 III. Sơ đồ kiến trúc về bảo mật và phân quyền người dùng:
 
-Trên mạng LAN sẽ bao gồm nhiều máy tính ca nhân (PC), Domain Controller (DC) cài HĐH Windows Server chứa danh sách các Domain Account, Database Server cài HĐH Windows Server và các hệ quản trị CSDL.
+Trên mạng LAN sẽ bao gồm nhiều máy tính cá nhân (PC), Domain Controller (DC) cài HĐH Windows Server chứa danh sách các Domain Account, Database Server cài HĐH Windows Server và các hệ quản trị CSDL.
 
 ----------------------------------------
 
-** Các loại tài khoản người dùng:
+** Các loại tài khoản người dùng (Logins):
 	- Domain Account: tài khoản người dùng do DC cấp và quản lý.
 	- Windows Local User: tài khoản người dùng do hệ điều hành Windows quản lý.
 	- SQL Login: tài khoản người dùng do SQL Server tạo và quản lý.
@@ -40,13 +40,16 @@ Trên mạng LAN sẽ bao gồm nhiều máy tính ca nhân (PC), Domain Control
 	- Administrators:
 	- Power User:
 	- ...
+
+Mặc định, người dùng thuộc nhóm Administrators trên Windows cũng sẽ là người dùng với quyền tối thượng trên tất cả các Server của SQL Server.
+
 (Trong SQL Server, User Group được gọi là Server Role)
 
 ----------------------------------------
 
 ** Để truy cập thành công vào SQL Server và tương tác với HQT CSDL:
 	Bước 01: Xác thực đăng nhập.
-		* Windows Authentication (Xác thực bởi hệ điều hành):
+		* Windows Authentication (Xác thực bởi hệ điều hành Windows):
 			- Windows Local User: cấu trúc Tên-máy-tính\Tên-tài-khoản-người-dùng (không yêu cầu nhập mật khẩu của tài khoản khi đăng nhập vào SQL Server).
 			- Domain Account: cấu trúc Tên-domain\Tên-tài-khoản-domain (không yêu cầu nhập mật khẩu của tài khoản khi đăng nhập vào SQL Server).
 

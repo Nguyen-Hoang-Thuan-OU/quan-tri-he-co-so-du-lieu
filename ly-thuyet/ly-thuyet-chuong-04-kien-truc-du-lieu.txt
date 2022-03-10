@@ -14,19 +14,19 @@ File lưu dữ liệu của SQL Server được tổ chức sẵn cấu trúc l�
 ** Một CSDL có 2 loại file: data files và log files.
 
 	* Data files chứa data (của table) và index: primary data file và secondary data file.
-		-> Nặng, có thể có nhiều file.
+		-> Nặng, có thể có một hoặc nhiều file.
 
-		- primary data file (mdf): là file lưu dữ liệu, tự động có mà không cần tạo và có có thể có 1 file.
-			+ Chứa pointer chỉ đến các secondary.
+		- primary data file (.mdf): là file lưu dữ liệu, tự động có mà không cần tạo và chỉ có thể có 1 file.
+			+ Chứa pointer chỉ đến các secondary data file (ndf).
 			+ Chứa 3 loại nội dung:
-				1. Dữ liệu.
-				2. Index: loại dữ liệu mà hệ thống tự sinh, lưu, cập nhật và huỷ; dung lượng có thể lớn hơn dung lượng của dữ liệu; nên có từ bước thiết kế CSDL vì nó giúp tìm kiếm, sắp xếp, chạy nhanh hơn.
+				1. Dữ liệu: dữ liệu người dùng.
+				2. Index (mục lục): loại dữ liệu mà hệ thống tự sinh, lưu, cập nhật và huỷ khi tương tác dữ liệu trong một cột/bảng nào đó; dung lượng có thể lớn hơn dung lượng của dữ liệu; nên có từ bước thiết kế CSDL vì nó giúp tìm kiếm, sắp xếp, chạy nhanh hơn.
 					Ví dụ: thiết kế bảng SinhVien với index ở cột Ho và Ten vì 2 cột này thường xuyên được tìm kiếm, sắp xếp.
-				3. Thông tin quản trị hệ thống của CSDL (mục lục dữ liệu - metadata/catalog).
+				3. Thông tin quản trị hệ thống của CSDL (mục lục dữ liệu - metadata/catalog): quản lý người dùng, phân quyền, nơi dữ liệu,... của toàn bộ CSDL (dạng con trỏ).
 
 --------------------
 
-		- secondary data file (ndf) là file lưu dữ liệu, do người dùng tạo và có thể tạo nhiều file.
+		- secondary data file (.ndf): là file lưu dữ liệu, do người dùng tạo và đặt tên, có thể tạo nhiều file.
 			+ Chứa các đối tượng dữ liệu và user.
 			+ Có thể lưu khác ổ đĩa với primary data file.
 			+ Chỉ chứa 2 loại nội dung:
@@ -36,45 +36,50 @@ File lưu dữ liệu của SQL Server được tổ chức sẵn cấu trúc l�
 ----------------------------------------------
 
 	* Log files thông tin về các hoạt động và giao tác, dùng cho việc giám sát hệ thống và phục hồi dữ liệu.
-		-> Nhẹ, chỉ có một file hoạt động dù có thể có nhiều file.
+		-> Nhẹ, chỉ có một file đang hoạt động dù có thể có nhiều file.
 
-		- log data file (ldf): là file nhị phân đã được mã hoá và phân quyền, được dùng để giám sát hoạt động của người dùng, lưu thông tin hoạt động của CSDL, tham gia vào quá trình phục hồi dữ liệu, được tổ chức thành các sự kiện (thời gian khi nào, ai đăng nhập vào, thực hiện thao tác gì,...). Các thông tin mới sẽ được lưu nối đuôi, các thông tin đã cũ sẽ được tự động xoá nhờ giải thuật checkpoint nên file này rất nhỏ, nhẹ và không tăng dung lượng. Hoặc khi được sao lưu, file này sẽ luôn được xoá trống. Cơ chế lưu giống với cơ chế của hệ điều hành Windows, và có thể xem bằng phần mềm Log File Viewer.
+		- log data file (.ldf): là file nhị phân đã được mã hoá và phân quyền, được dùng để giám sát hoạt động của người dùng, lưu thông tin hoạt động của CSDL, tham gia vào quá trình phục hồi dữ liệu, được tổ chức thành các sự kiện (thời gian khi nào, ai đăng nhập vào, thực hiện thao tác gì,...). Các thông tin mới sẽ được lưu nối đuôi, các thông tin đã cũ sẽ được tự động xoá nhờ giải thuật checkpoint nên file này rất nhỏ, nhẹ và không tăng dung lượng. Hoặc khi được sao lưu, file này sẽ luôn được xoá trống. Cơ chế lưu giống với cơ chế của hệ điều hành Windows, và có thể xem bằng phần mềm Log File Viewer.
 
 =========================================================================
 
 ** Các tuỳ chọn khi tạo mới một CSDL:
-	- Logical Name (tên luận lý): tên không chứa phần đuôi và không liên quan đến đường dẫn trên ổ đĩa, chỉ dùng trong nội bộ để phân biệt các CSDL với nhau, mặc định sẽ lấy Database name làm Logical Name.
+	- Logical Name (tên luận lý): tên ngắn gọn, không chứa phần đuôi và không liên quan đến đường dẫn trên ổ đĩa, chỉ sử dụng trong nội bộ để phân biệt các CSDL với nhau, mặc định sẽ lấy Database Name làm Logical Name.
 
 --------------------
 
-	- Physical Name (tên vật lý): tên phụ thuộc vào đường dẫn được chỉ định (đã bao gồm Path và File name).
+	* Path: đường dẫn vật lý trên ổ đĩa.
+	* File Name: tên luận lý kèm phần mở rộng sau khi file đã được tạo xong.
+
+	- Physical Name (tên vật lý): tên phụ thuộc vào đường dẫn được chỉ định (đã bao gồm Path và File Name).
 
 --------------------
 
-	- File Type: Rows Data.
+	- File Type:
+		+ Rows Data: data file.
+		+ Log: log file.
 
 --------------------
 
-	- Filegroup: là một nhóm logic (luận lý) các data file (về mặt vật lý thì không nằm cùng nhau), không đề cập đến log file. Dùng để gom nhiều data file thành 1 nhóm và quản lý theo nhóm, giúp dễ dàng trong việc bảo trì hệ thống, sao lưu và phục hồi dữ liệu. Quyền lưu bảng vào data file nào trong filegroup sẽ do hệ quản trị quyết định để "cân bằng tải".
+	- Filegroup: là một nhóm logic (luận lý) các data file (về mặt vật lý có thể không nằm cùng nhau trong cùng một phân vùng ổ đĩa mà chỉ là các shortcut dẫn đến data file đó), không đề cập đến log file (Not Applicable). Dùng để gom nhiều data file thành 1 nhóm và quản lý theo nhóm, giúp dễ dàng trong việc quản lý như bảo trì hệ thống, sao lưu và phục hồi dữ liệu. Quyền lưu bảng vào data file nào trong filegroup sẽ do hệ quản trị quyết định để "cân bằng tải".
 
 		* Có 2 loại filegroups: primary và user-defined.
-			+ primary filegroup: mặc định, luôn có sẵn. Là nơi duy nhất được phép chứa file .mdf nhưng được phép chứa thêm file .ndf. Chứa tất cả các system table.
-			+ user-defined filegroup: do người dùng tự tạo. Chỉ chứa các file .ndf cũng do người dùng tự tạo, không được chứa file .mdf. Chứa các database objects. 1 cơ sở dữ liệu chứa tối đa 32,766 user-defined filegroups.
+			+ primary filegroup: mặc định, luôn có sẵn khi mới tạo CSDL. Là nơi duy nhất được phép chứa file .mdf (primary data file) và được phép chứa thêm những file .ndf (secondary data file) khác. Chứa tất cả các system table. Không được phép gán thuộc tính Read-Only vì mục lục dữ liệu sẽ được liên tục cập nhật trong quá trình hoạt động.
+			+ user-defined filegroup: do người dùng tự tạo và đặt tên. Chỉ chứa các file .ndf, không được chứa file .mdf. Chứa các database objects. 1 cơ sở dữ liệu chứa tối đa 32,766 user-defined filegroups.
 
-		* Mỗi filegroup sẽ có hai thuộc tính: Read-Only và Default.
-			+ Read-Only: dữ liệu của tất cả các file thuộc filegroup sẽ bị khoá, không thể thêm-sửa-xoá mà chỉ có thể xem/đọc, dữ liệu vẫn vĩnh viên như cũ dù có bị xoá. Primary filegroup không được phép Read-Only vì nó chứa file catalog dùng để lưu lại những thay đổi trong CSDL, nếu bị cấm thay đổi thì những file khác cũng không thể thêm-sửa-xoá dữ liệu. Có thể tận dụng Read-Only để sao lưu những file có dung lượng lớn nhưng không có sự thay đổi trong một khoảng thời gian dài.
-			+ Default: chỉ định một filegroup làm filegroup mặc định. Khi tạo mới một CSDL, nếu chưa gán filegroup cho CSDL này thì SQL Server sẽ tự gán vào filegroup mặc định.
-
---------------------
-
-	- Initial Size (MB): dung lượng khởi tạo ban đầu, dung lượng mà file sẽ chiếm trên ổ đĩa dù không chứa dữ liệu.
+		* Mỗi filegroup sẽ có hai thuộc tính: Read-Only và Default (phải chứa ít nhất 1 data file).
+			+ Read-Only: dữ liệu của tất cả các file thuộc filegroup này sẽ bị khoá, không thể thêm-sửa-xoá mà chỉ có thể xem/đọc, dữ liệu vẫn vĩnh viên như cũ và không thể thay đổi dù có bị xoá. Primary filegroup không được phép Read-Only vì nó chứa file catalog dùng để lưu lại những thay đổi trong CSDL, nếu bị cấm thay đổi thì những file khác cũng không thể thêm-sửa-xoá dữ liệu. Có thể tận dụng Read-Only để sao lưu những file có dung lượng lớn nhưng không có sự thay đổi trong một khoảng thời gian dài.
+			+ Default: chỉ định một filegroup làm filegroup mặc định. Khi tạo mới một data file, nếu chưa gán filegroup cho data file này thì SQL Server sẽ tự gán vào filegroup mặc định.
 
 --------------------
 
-	- Autogrowth: chế độ tự động bung thêm khi sắp hết dung lượng, yêu cầu một khoảng thời gian để tái cấu trúc lại file. Nếu tắt, khi đầy thì file sẽ tự động dừng và không có phép truy cập kể cả đọc file.
-		+ Theo phần trăng tổng dung lượng của file.
+	- Initial Size (MB): chỉ định dung lượng khởi tạo ban đầu, dung lượng mà file sẽ chiếm trên ổ đĩa khi mới tạo file dù không chứa dữ liệu. Giúp tránh việc phân mảnh và phải tái cấu trục lại bộ nhớ, đảm bảo về mặt tốc độ.
+
+--------------------
+
+	- Autogrowth: chế độ tự động bung thêm khi sắp hết dung lượng, yêu cầu một khoảng thời gian để tái cấu trúc lại file và không gian lưu trữ. Nếu tắt, khi đầy thì file sẽ tự động dừng hoạt động và không có phép truy cập kể cả đọc file.
+		+ Theo phần trăm tổng dung lượng của file.
 		+ Theo dung lượng (MB) đồng đều cho mỗi lần tăng.
-			* Tăng đến khi ổ cứng hết dung lượng.
+			* Tăng đến khi ổ cứng hết dung lượng thì dừng.
 			* Tăng đến số dung lượng được chỉ định (MB) thì dừng.
 
 ----------------------------------------

@@ -13,17 +13,17 @@ I. Lập kế hoạch cài đặt Microsoft SQL Server 2008:
 		* Chỉ phục vụ cho Server, đa phần khác nhau về hỗ trợ phần cứng: Windows Server, Windows Datacenter, Windows Advanced Server...
 
 			// Tuỳ serial key mà sẽ có những phiên bản tương ứng được cài đặt
-			- Enterpise: quy mô lớn nhất
-			- Standard:
-			- Workgroup:
+			- Enterpise: quy mô lớn nhất, khai thác được toàn bộ/vô hạn phần cứng của máy tính (RAM, CPU,...).
+			- Standard: quy mô vừa, khác nhau về khả năng khai thắc phần cứng.
+			- Workgroup: quy mô nhỏ, khác nhau về khả năng khai thắc phần cứng.
 			- Web: một trường hợp đặc biệt.
 
 
 		* Phục vụ cho máy tính cá nhân (PC) lẫn Server: Windows 7, Windows 10, Windows Server,...
 
-			- Developer: quy mô nhỏ, dành cho các nhà phát triển phần mềm với đầy đủ các chức năng nhưng hỗ trợ phần cứng vẫn có hạn chế.
+			- Developer: quy mô nhỏ, là phiên bản trả phí với đầy đủ các chức năng nhưng hỗ trợ phần cứng vẫn có hạn chế. Thường dành cho các nhà phát triển phần mềm để thử nghiệm các giải pháp về cơ sở dữ liệu, lập trình,... trên chính máy tính cá nhân của họ trước khi sử dụng trên máy Server. Không được phép sử dụng trong thương mại.
 
-			- Express: quy mô nhỏ nhất, công khai miễn phí trên Internet thông qua trang chủ của Microsoft và không phát hành đĩa vật lý. Cho người dùng sử dụng thử với mục đích học tập, nghiệm cứu nên sẽ bị hạn chế về tính năng, không đủ chức năng để hoạt động qua mạng LAN (Client/Server), cài trên máy nào thì sẽ là Server phục vụ cho các ứng dụng chạy trên trong máy đó, và hạn chế khả năng hỗ trợ phần cứng. Tự động được cài kèm theo khi cài đặt Visual Studio.
+			- Express: quy mô nhỏ nhất, công khai miễn phí trên Internet thông qua trang chủ của Microsoft và không phát hành đĩa vật lý. Cho người dùng sử dụng thử với mục đích học tập, nghiệm cứu và thậm chí là thương mại nhưng sẽ bị hạn chế về tính năng và dung lượng lưu trữ. Không đủ chức năng để hoạt động qua mạng LAN (Client/Server), nên khi cài trên máy nào thì sẽ là Server phục vụ cho các ứng dụng chạy trên trong máy đó, và hạn chế khả năng hỗ trợ phần cứng. Tự động được cài kèm theo khi cài đặt Visual Studio.
 
 --------------------------------------------
 
@@ -33,22 +33,28 @@ I. Lập kế hoạch cài đặt Microsoft SQL Server 2008:
 
 	4. Điều kiện về phần mềm:
 		- Hệ điều hành: Windows Server, Windows 11,...
-		- Collation: độ tương thích về đa ngôn ngữ khi lưu trữ dữ liệu cho từng ô trong bảng (table), ví dụ: tiếng Ả Rập, Thái, Hàn, Nhật, Trung,..., được sử dụng để lưu trữ, hiển thị, sắp xếp,... sao cho đúng nhất. Chọn collection mặc định: 
+		- Collation: độ tương thích về đa ngôn ngữ khi lưu trữ dữ liệu (không phải ngôn ngữ trên giao diện) cho từng ô trong bảng (table), được sử dụng để lưu trữ, hiển thị, sắp xếp,... sao cho đúng nhất trong cơ sở dữ liệu. Với tiếng Việt, trong collation mặc định đã hỗ trợ Unicode nên không cần phải cài đặt thêm.
+			Ví dụ: tiếng Ả Rập, Thái, Hàn, Nhật, Trung,...
 
 --------------------------------------------
 
 	5. Xác định cách tổ chức ổ đĩa cài đặt và lưu trữ dữ liệu:
 
-	Một cơ sở dữ liệu của SQLS gồm 2 loại file (đang hoạt động, cần sử dụng): data file (có thể có nhiều) và log file (chỉ có một).
+	Một cơ sở dữ liệu của SQLS gồm 2 loại file (đang hoạt động, cần sử dụng): data file (có thể có nhiều) và log file (chỉ có một chính).
 
-	Tổ chức ổ đĩa và lưu trữ dữ liệu sao cho tối ưu nhất: một Server có thể có rất nhiều ổ cứng, được tận dụng và tập hợp thành các nhóm (RAID) để tăng tốc độ, bộ an toàn cho dữ liệu khi bị hỏng ổ cứng.
+	Tổ chức ổ đĩa và lưu trữ dữ liệu sao cho tối ưu nhất: một Server có thể có rất nhiều ổ cứng, được tận dụng và tập hợp thành các nhóm (RAID) để tăng tốc độ, bộ an toàn cho dữ liệu khi bị hỏng ổ cứng. Để sử dụng được RAID, yêu cầu phần cứng (bo mạch chủ - mainboard) và hệ điều hành phải hỗ trợ.
+
+	* RAID (Redundant Arrays of Inexpensive Disks / Redundant Arrays of Independent Disks): một dãy gồm nhiều ổ đĩa độc lập nhau.
+		-> Nhiều ổ đĩa vật lý (ổ cứng) kết hợp thành một thiết bị lưu trữ ảo.
+
+	* Vạch: 1 cặp đĩa (gồm 2 ổ cứng).
 
 --------------------
 
 		- RAID 1 - Disk mirroring (Từng cặp đĩa là bản sao của nhau, đảm bảo an toàn dữ liệu):
 			+ Cần tối thiểu 2 ổ cứng.
 
-			+ Dữ liệu được ghi vào 2 ổ giống hệt nhau (Mirroring).
+			+ Dữ liệu được ghi/sao chép giống hệt nhau vào các ổ (Mirroring).
 				+ Lưu log file.
 				+ Lưu hệ điều hành.
 				+ Lưu SQL.
@@ -62,40 +68,38 @@ I. Lập kế hoạch cài đặt Microsoft SQL Server 2008:
 
 --------------------
 
-* Vạch: 1 cặp đĩa (gồm 2 ổ cứng).
-
 		- RAID 0 - Disk striping (Lưu theo vạch/phần đĩa, song song, nhanh):
 			+ Cần tối thiểu 2 ổ cứng.
 
-			+ Dữ liệu sẽ được chia ra nhiều phần bằng nhau.
+			+ Dữ liệu sẽ được chia ra nhiều phần (block) bằng nhau và cùng đồng thời được lưu/ghi vào ổ cứng mà không cần phải đợi nhau; tương tự với đọc.
 
 			+ Dung lượng: tận dụng được 100% tổng dung lượng ổ đĩa.
 
 			+ Tốc độ đọc & ghi tăng gấp n lần (xn) - nhanh nhất.
 
-			+ Nhược điểm: không chịu được hư hỏng, 1 ổ cứng bị hư thì toàn bộ dữ liệu được lưu đồng thời ở những ổ cứng khác sẽ trở nên vô nghĩa vì không còn khả năng tái tạo lại dữ liệu.
+			+ Nhược điểm: không chịu được hư hỏng, 1 ổ cứng bị hư thì toàn bộ dữ liệu được lưu đồng thời ở những ổ cứng khác sẽ trở nên vô nghĩa vì không còn khả năng tái tạo lại dữ liệu. Không nên sử dụng trong những môi trường với nhiệm vụ đặc biệt quan trọng về mặt dữ liệu.
 
 				Ví dụ: nếu có 1 khối dữ liệu và 3 ổ cứng, khối dữ liệu đó sẽ được chia thành 3 phần bằng nhau, mỗi phần sẽ đồng thời được lưu vào 1 ổ cứng. Tốc độ ghi tăng gấp 3 lần, tốc độ đọc để tái tạo dữ liệu cũng tăng gấp 3 lần.
 
 --------------------
 
-		- RAID 5 - Parity stripe (Cải tiến của RAID 0, cung cấp cơ chế khôi phục dữ liệu)
+		- RAID 5 - Parity stripe (Cải tiến của RAID 0, cung cấp cơ chế khôi phục dữ liệu):
 			+ Cần tối thiểu 3 ổ cứng, các ổ cứng phải cùng dung lượng.
 
 			+ Các Parity dùng để khôi phục dữ liệu được phân bố đồng đều trên tất cả các ổ đĩa cứng.
 
-			+ Dung lượng: mất 1/n tổng dung lượng ổ đĩa (mất 1 và chỉ 1).
+			+ Dung lượng: mất 1/n tổng dung lượng ổ đĩa (mất 1 và chỉ 1), càng nhiều ổ cứng thì càng phát huy được tác dụng.
 
-			+ Tốc độ đọc bị giảm đi một chút.
+			+ Tốc độ đọc & ghi tăng gần ~n lần, nhưng đọc bị giảm đi một chút do phải sinh thêm giải thuật parity.
 
 			+ Ưu điểm: An toàn như RAID 1 nhưng tốc độ gần giống RAID 0. Ví dụ có 3 ổ đĩa, khi 1 ổ bị hư và tiến hành thay mới thì 2 ổ đĩa còn lại sẽ chạy một giải thuật tái tạo dữ liệu để tự động sinh dữ liệu cho ổ đĩa thứ 3 mới được thay.
-				-> Có khả năng chịu được và tái tạo dữ liệu khi 1 ổ đĩa bị hư.
+				-> Có khả năng chịu và tái tạo được dữ liệu khi 1 ổ đĩa bị hư.
 
-				Ví dụ: 1 khối dữ liệu lớn, trước khi được chia cho 3 ổ cứng thì sẽ đi qua giải thuật parity, giải thuật này sẽ chia khối dữ liệu gốc thành 3 khối (tương ứng với 3 ổ đĩa) với dung lượng nhỉnh hơn khối dữ liệu gốc (vì phải đính kèm thuật toán). Khi tái tạo, mỗi ổ cứng sẽ chạy giải thuật Giải parity để tái tạo lại thành khối dữ liệu ban đầu.
+				Ví dụ: 1 khối dữ liệu lớn, trước khi được chia cho 3 ổ cứng thì sẽ đi qua giải thuật parity, giải thuật này sẽ chia khối dữ liệu gốc thành 3 khối (tương ứng với 3 ổ đĩa) với dung lượng nhỉnh hơn khối dữ liệu gốc (vì phải đính kèm thuật toán). Khi tái tạo, mỗi ổ cứng sẽ chạy giải thuật giải parity để tái tạo lại thành khối dữ liệu ban đầu.
 
 --------------------
 
-		- RAID 1+0 - Mirroring + Striping:
+		- RAID 1+0 - Mirroring + Striping: hệ điều hành sẽ tự lo việc phân bố.
 			+ Cần tối thiểu 4-6 ổ cứng.
 
 			+ Lưu data file.
@@ -114,26 +118,31 @@ I. Lập kế hoạch cài đặt Microsoft SQL Server 2008:
 
 	6. Xác định các instance sẽ cài đặt:
 
-		* Instance (thể hiện): lên kế hoạch/đang cài một Server mới thì được gọi là instance, nhưng khi cài xong rồi/có thể sử dụng được rồi thì được gọi là Server và có Server Name + Instance Name. Mỗi Database Server sau khi cài xong sẽ cho ra ít nhất một cặp dịch vụ chạy ngầm (SQL Server và SQL Server Agent).
-			-> Là Database Server (SQL Server) đang trong quá trình cài, cài xong sẽ được gọi là Server.
+		* Instance (thể hiện): lên kế hoạch/đang cài một Server mới thì được gọi là instance, nhưng khi cài xong rồi/có thể sử dụng được rồi thì được gọi là Server và có Server Name + Instance Name. Mỗi Database Server sau khi cài xong sẽ cho ra ít nhất một cặp dịch vụ chạy ngầm (SQL Server Database Engine và SQL Server Agent), nếu không có nhu cầu sử dụng thường xuyên thì nên chủ động ngừng (stop) dịch vụ (service).
+			-> Là Database Server (SQL Server) đang trong quá trình cài, cài xong sẽ được gọi là Database Server.
 
 			Ví dụ: nhà đang xây được gọi là công trình, nhưng khi xây xong rồi thì được gọi là nhà.
 
 		Khi sử dụng thực tế thì chỉ sử dụng Server Name, Instance Name chỉ dùng để xem lại dấu tích cài/nguồn gốc của Server.
 
-		* Database Engine: là một trong nhiều loại dịch vụ, là dịch vụ chính giúp quản lý và cung cấp xử lý dữ liệu cho các truy vấn/kết nối (Agent Service là dịch vụ song song để chạy các tác vụ tự động hoá).
+		* Database Engine: là một trong nhiều loại dịch vụ/Server, là "động cơ" chính giúp quản lý và cung cấp xử lý dữ liệu cho các truy vấn/kết nối cơ sở dữ liệu.
+		(Agent Service là dịch vụ song song để chạy các tác vụ tự động hoá).
 			-> Mục đích chính khi cài SQLS.
+
+			+ SQL Server Compact Edition: phiên bản để quản lý cơ sở dữ liệu, phục vụ cho các máy chạy hệ điều hành Windows Mobile.
 
 		* Microsoft SQL Server Management Studio (MSSMS) cho phép quản lý nhiều Database Server (SQL Server) với tên khác nhau trên cùng một máy tính. Trong mỗi Server sẽ có nhiều cơ sở dữ liệu khác nhau, hệ thống quản lý người dùng khác nhau.
 
 --------------------
 
 		* Có thể cài đặt:
-			- Không có hoặc chỉ có một default instance: sau khi cài xong, tên của Server sẽ trùng với tên của máy tính.
+			- Default instance (không có hoặc chỉ có một): sau khi cài xong, không cần đặt tên cho Server vì tên của Server sẽ trùng với tên của máy tính (với điều kiện máy tính chưa từng cài Server với Default instance).
 				-> Instance Name: MSSQLServer | Server Name: Tên-máy-tính
 
-			- Nhiều named instance: người dùng phải đặt tên cho Instance.
+			- Named instance (có thể có nhiều): người dùng phải đặt tên cho Instance.
 				-> Instance Name: Tên-Instance | Server Name: Tên-máy-tính\Tên-Instance
+
+		(Server Name quan trọng vì sau khi cài xong thì sẽ sử dụng tên Server chứ không phải tên Instance, khi kết nối với CSDL cũng sẽ phải sử dụng tên Server.)
 
 ==========================================================================
 
@@ -147,23 +156,195 @@ Một CSDL trong SQLS được lưu thành nhiều tập tin, giúp lưu đượ
 
 Khi mới tạo ra, ví dụ: CSDL MyDB, sẽ có 2 file chính với tên mặc định là MyDB.ldf và MyDB.mdf. Các tập tin do người dùng tạo sẽ có tên là MyDB.ndf.
 
-	- log data file (ldf): lưu thông tin hoạt động của CSDL.
+	- log data file (.ldf): lưu thông tin hoạt động của CSDL.
 
-	- primary data file (mdf): là file lưu dữ liệu, tự động có mà không cần tạo.
+	- primary data file (.mdf): là file lưu dữ liệu, tự động có mà không cần tạo.
 
-	- secondary data file (ndf) là file lưu dữ liệu, do người dùng tạo và có thể tạo nhiều file.
+	- secondary data file (.ndf): là file lưu dữ liệu, do người dùng tạo và có thể tạo nhiều file.
 
 ==========================================================================
 
 III. Thực hiện cài đặt SQLS2008 phiên bản Express/Developer/Standard/Enteprise:
 
+** SQL Server Installation Center
+
+01. Planning: tài liệu.
+	- Hardware and Software Requirements: điều kiện yêu cầu về phần mềm và phần cứng.
+	- Security Documentation: tài liệu về bảo mật.
+	...
+
+--------------------
+
+* Cluster Server: một nhóm các Server.
+
+02. Installation: nơi để cài mới Instance hoặc thêm tính năng mới.
+	- New SQL Server stand-alone installation or add features to an existing installation: cài mới một Instance, không liên quan gì đến Server cũ; hoặc thêm mới chức năng cho những Server đã được cài trước đó.
+	- New SQL Server failover cluster installation: dự phòng.
+	- Add node to a SQL Server failover cluster: thêm một Server mới với vào trong  cluster.
+
+--------------------
+
+03. Maintenance:
+
+
+--------------------
+
+04. Tools:
+
+--------------------
+
+05. Resources:
+
+--------------------
+
+06. Advanced:
+
+--------------------
+
+07. Options:
+
+
 ==========================================================================
 
 IV. Lựa chọn ở các bước trong quá trình cài đặt:
 
+** SQL Server [2008] Setup:
 
+01. Installation Type:
 
+	- Perform a new installation of SQL Server 2008: thực hiện cài một Instance mới.
 
+	- Add features to an existing instance of SQL Server 2008: thay đổi chức năng của các Instance hiện hành.
+		+ Khi được chọn sẽ hiển thị danh sách các Server đã có sẵn trên máy dưới dạng hộp tùy chọn (select box).
+
+--------------------
+
+02. Product Key: yêu cầu nhập product key (bản quyền). Tuỳ vào key được nhập mà phiên bản SQL Server tương ứng sẽ được cài đặt.
+
+	-----------------------------------------------------------------
+	|								|
+	| * Microsoft SQL Server 2008 R2 Standard Version (32-bit)	|
+	| CXTFT-74V4Y-9D48T-2DMFW-TX7CY					|
+	|								|
+	| * Microsoft SQL Server 2008 R2 Standard Edition (64-bit)	|
+	| B68Q6-KK2R7-89WGB-6Q9KR-QHFDW					|
+	|								|
+	|---------------------------------------------------------------|
+	|								|
+	| PTTFM-X467G-P7RH2-3Q6CG-4DMYB					|
+	|								|
+	| * Microsoft SQL Server 2008 R2 Developer Edition (32-bit)	|
+	| MC46H-JQR3C-2JRHY-XYRKY-QWPVM					|
+	|								|
+	| * Microsoft SQL Server 2008 R2 Developer Edition (64-bit)	|
+	| FTMGC-B2J97-PJ4QG-V84YB-MTXX8					|
+	|								|
+	|---------------------------------------------------------------|
+	|								|
+	| * Microsoft SQL Server 2008 R2 Data Center Edition (32-bit)	|
+	| PTTFM-X467G-P7RH2-3Q6CG-4DMYB					|
+	|								|
+	| * Microsoft SQL Server 2008 R2 Data Center Edition (64-bit)	|
+	| DDT3B-8W62X-P9JD6-8MX7M-HWK38					|
+	|								|
+	|---------------------------------------------------------------|
+	|								|
+	| * Microsoft SQL Server 2008 R2 Enterprise Edition (32-bit)	|
+	| R88PF-GMCFT-KM2KR-4R7GB-43K4B					|
+	|								|
+	| * Microsoft SQL Server 2008 R2 Enterprise Edition (64-bit)	|
+	| GYF3T-H2V88-GRPPH-HWRJP-QRTYB					|
+	|								|
+	|---------------------------------------------------------------|
+	|								|
+	| * Microsoft SQL Server 2008 R2 WorkGroup Edition		|
+	| XQ4CB-VK9P3-4WYYH-4HQX3-K2R6Q					|
+	|								|
+	|---------------------------------------------------------------|
+	|								|
+	| * Microsoft SQL Server 2008 R2 WEB Edition			|
+	| FP4P7-YKG22-WGRVK-MKGMX-V9MTM					|
+	|								|
+	-----------------------------------------------------------------
+
+--------------------
+
+03. Feature Selection:
+
+	* Instance Features: chức năng của riêng Instance sắp sửa cài.
+		- Database Engine Services:
+			+ SQL Server Replication:
+			+ Full-Text Search:
+		- Analysis Services:
+		- Reporting Services:
+	* Shared Features: những chức năng sử dụng chung của các Instance.
+
+--------------------
+
+04. Instance Configuration:
+
+	- Default instance: nếu được chọn thì Instance ID sẽ mặc định là MSSQLSERVER, tên Server sau khi cài xong sẽ là Tên-máy-tính.
+
+	- Named instance: khi gõ tên thì Instance ID sẽ tự động được gõ theo, tên Server sau khi cài xong sẽ là Tên-máy-tính\Tên-Instance (tên Instance ID).
+
+	- Instance root directory: đường dẫn mặc định của Instance là C:\Program Files\Microsoft SQL Server
+
+--------------------
+
+05. Server Configuration:
+
+	* Tab - Service Accounts:
+		- SQL Server Database Engine: dịch vụ chính để quản lý CSDL.
+		- SQL Server Agent: dịch vụ hỗ trợ cho tự động hoá.
+
+			+ Use the same account for all SQL Server services: quyền của các tài khoản trên các dịch vụ (2 dịch vụ có thể do 2 người dùng khác nhau quản lý).
+				-> Account Name: NT AUTHORITY\SYSTEM
+
+		- SQL Server Browser: dịch vụ để duyệt (browse) các Server hiện có trên mạng LAN, có thể không cần sử dụng nếu nhớ tên Server.
+
+	* Tab - Collation: nơi điều chỉnh bộ mã ngôn ngữ.
+
+--------------------
+
+06. Database Engine Configuration:
+
+* Authentication Mode:
+	- Windows authentication mode: chỉ cho phép người dùng truy cập thông qua xác thực của hệ điều hành Windows (Windows Local User và Domain Account).
+
+	- Mixed Mode: cho phép thêm loại người dùng do SQL Server tạo và quản lý. Tài khoản mặc định có tên là "sa" (system admin) và yêu cầu phải đặt mật khẩu.
+
+* Specify SQL Server administrators: có thể người cài SQL Server không phải là người có quyền truy cập vào SQL Server sau khi cài xong vì không thuộc vào nhóm Administrators trên SQL Server. Vì vậy, nếu muốn đăng nhập vào được thì phải thủ công tự thêm vào nhóm.
+
+--------------------------------------------
+
+** SQL Server [2019] Setup:
+
+* Tải về máy: phiên bản Express
+	- SQL2019-SSEI-Expr.exe (Bootstrap): phần mồi để cài Server và Client.
+		* Select an installation type:
+			+ Basic: tự động tải và kích hoạt cài.
+			+ Custom: tự động tải và kích hoạt cài.
+			+ Download Media: tự động tải và lưu file cài lại trên máy.
+
+		* Package:
+			+ Express Core: lõi để xử lý dữ liệu.
+			+ Express Advanced: bản full.
+			+ LocalDB: phiên bản gọn-nhẹ, nhúng CSDL vào thiết bị di động, cho phép đem đi mà không cần cài đặt (portable), đủ dùng để lưu trữ và xử lý cơ bản.
+
+	- SQLEXPRADV_x64_ENU.exe (Server): 
+
+	- SSMS-Setup-ENU.exe (Client): giao tiếp với Server
+
+--------------------
+
+* Feature Selection:
+	- SQL Server Replication: nhân bản data sang nhiều nơi để tránh bị tấn công, đảm bảo về sao lưu và phục hồi,...
+
+	- Machine Learning Service...: các dịch vụ liên quan đến máy học và các ngôn ngữ lập trình liên quan (Python, Java, R).
+
+	- Full-Text...: liên quan đến kỹ thuật tìm kiếm và trích xuất thông tin.
+
+--------------------
 
 
 

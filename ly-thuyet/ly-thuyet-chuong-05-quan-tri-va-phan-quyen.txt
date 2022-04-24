@@ -41,7 +41,7 @@ Trên mạng LAN sẽ bao gồm nhiều máy tính cá nhân (PC), Domain Contro
 	- Power User:
 	- ...
 
-Mặc định, người dùng thuộc nhóm Administrators trên Windows cũng sẽ là người dùng với quyền tối thượng trên tất cả các Server của SQL Server.
+Mặc định, người dùng thuộc nhóm Administrators trên Windows cũng sẽ tự động là người dùng với quyền tối thượng trên tất cả các Server của SQL Server mà không cần phải gán quyền thủ công.
 
 (Trong SQL Server, User Group được gọi là Server Role)
 
@@ -108,7 +108,7 @@ VII. Server Role: quyền của người dùng trong Server.
 
 * Fixed Server Roles (Nhóm quyền cố định trên Server): 8 bộ quyền chính (không được đổi tên role, thêm mới role hoặc sửa đổi quyền) và 1 bộ quyền tuỳ chọn.
 
-	01. sysadmin: tương đương với User Group Administrators ở bên ngoài hệ điều hành Windows, quyền tối thượng (trong cả SQL Server và CSDL) và có thể thực hiện bất kỳ hành động nào. Mặc định, tất cả những người dùng Windows nằm trong User Group Administrators khi login vào SQL Server sẽ đều thuộc nhóm sysadmin.
+	01. sysadmin: tương đương với User Group Administrators ở bên ngoài hệ điều hành Windows, quyền tối thượng (trong cả SQL Server và CSDL) và có thể thực hiện bất kỳ hành động nào. Mặc định, không cần phải gán quyền một cách thử công, tất cả những người dùng Windows nằm trong User Group Administrators khi login vào SQL Server sẽ đều thuộc nhóm sysadmin.
 
 	02. serveradmin: có thể chỉnh thông số cấu hình và ngắt kết nối của Server.
 

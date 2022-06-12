@@ -72,7 +72,7 @@ Khi phục hồi cũng nên có kỹ thuật để chọn phần muốn phục h
 --------------------------
 
 04. Full and Differential Backup with Transaction Log: kết hợp xen kẽ giữa sao lưu full, diff và log file.
-	-> Khi khôi phục chỉ cần duy nhất 1 file sao lưu full, 1 file diff gần nhất (nếu file diff được lưu sau log file), các log file được lưu sau file diff (nếu có) và 1 file tail log.
+	-> Khi khôi phục chỉ cần duy nhất 1 file sao lưu full gần nhất, 1 file diff gần nhất, các log file được lưu sau file diff (nếu có) và 1 file tail log (nhưng trước khi khôi phục file full thì phải đi sao lưu file tail log trước).
 
 --------------------------
 

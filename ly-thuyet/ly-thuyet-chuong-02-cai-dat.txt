@@ -2,6 +2,10 @@
 
 ==========================================================================
 
+Microsoft SQL Server (và các hệ quản trị cơ sở dữ liệu chuyên nghiệp khác) là một loại phần mềm đặc biệt mà khi cài đặt lần đầu thành công sẽ có được một Database Server. Không giống như những phần mềm khác, ở những lần sau, khi tiếp tục chạy lại bộ cài đặt, thay vì yêu câu ghi đè, cập nhật phiên bản, xoá phiên bản cũ để cài mới hoặc thậm chí không cho cài đặt,... thì Microsoft SQL Server lại cho ra thêm những Database Server (Server cung cấp dữ liệu - dịch vụ phục vụ cơ sở dữ liệu) mới.
+
+==========================================================================
+
 I. Lập kế hoạch cài đặt Microsoft SQL Server 2008:
 
 	1. Mục đích cài đặt: phục vụ học tập, hoạt động kinh doanh,...
@@ -14,118 +18,123 @@ I. Lập kế hoạch cài đặt Microsoft SQL Server 2008:
 
 			// Tuỳ serial key mà sẽ có những phiên bản tương ứng được cài đặt
 			- Enterpise: quy mô lớn nhất, khai thác được toàn bộ/vô hạn phần cứng của máy tính (RAM, CPU,...).
-			- Standard: quy mô vừa, khác nhau về khả năng khai thắc phần cứng.
-			- Workgroup: quy mô nhỏ, khác nhau về khả năng khai thắc phần cứng.
-			- Web: một trường hợp đặc biệt.
+			- Standard: quy mô vừa, khác nhau về khả năng khai thác phần cứng.
+			- Workgroup: quy mô nhỏ, khác nhau về khả năng khai thác phần cứng.
+			- Web: một trường hợp đặc biệt, vẫn trích tính năng từ những phiên bản khác.
 
 
-		* Phục vụ cho máy tính cá nhân (PC) lẫn Server: Windows 7, Windows 10, Windows Server,...
+		* Phục vụ cho máy tính cá nhân (PC) lẫn Server: Windows 7, Windows 11, Windows Server,...
 
-			- Developer: quy mô nhỏ, là phiên bản trả phí với đầy đủ các chức năng nhưng hỗ trợ phần cứng vẫn có hạn chế. Thường dành cho các nhà phát triển phần mềm để thử nghiệm các giải pháp về cơ sở dữ liệu, lập trình,... trên chính máy tính cá nhân của họ trước khi sử dụng trên máy Server. Không được phép sử dụng trong thương mại.
+			- Developer: quy mô nhỏ, là phiên bản trả phí với đầy đủ các chức năng nhưng hỗ trợ phần cứng vẫn có hạn chế. Thường dành cho các nhà phát triển phần mềm để thử nghiệm các giải pháp về cơ sở dữ liệu, lập trình,... trên chính máy tính cá nhân của họ trước khi sử dụng trên máy Server hoặc thậm chí thử nghiệm trực tiếp trên máy Server. Không được phép sử dụng trong thương mại.
 
-			- Express: quy mô nhỏ nhất, công khai miễn phí trên Internet thông qua trang chủ của Microsoft và không phát hành đĩa vật lý. Cho người dùng sử dụng thử với mục đích học tập, nghiệm cứu và thậm chí là thương mại nhưng sẽ bị hạn chế về tính năng và dung lượng lưu trữ. Không đủ chức năng để hoạt động qua mạng LAN (Client/Server), nên khi cài trên máy nào thì sẽ là Server phục vụ cho các ứng dụng chạy trên trong máy đó, và hạn chế khả năng hỗ trợ phần cứng. Tự động được cài kèm theo khi cài đặt Visual Studio.
+			- Express: quy mô nhỏ nhất, công khai miễn phí trên Internet thông qua trang chủ của Microsoft và không phát hành đĩa vật lý hoặc file, tương thích với gần như mọi phiên bản của hệ điều hành từ Windows XP trở lên. Cho người dùng sử dụng thử với mục đích học tập, nghiệm cứu và thậm chí là thương mại nhưng sẽ bị hạn chế về tính năng, khả năng hỗ trợ phần cứng và dung lượng lưu trữ. Không đủ chức năng để hoạt động qua mạng LAN (Client/Server), nên chủ yếu khi cài trên máy nào thì sẽ là Server phục vụ cho các ứng dụng chạy trên chính máy đó. Tự động được cài kèm theo khi cài đặt Visual Studio.
 
 --------------------------------------------
 
-	3. Điều kiện về phần cứng (RAM, CPU): là hệ quản trị tốn tài nguyên. Những phiên bản cũ có bảo mật kém (1998) và tiêu tốn tài nguyên (2000). Những phiên bản về sau dần ổn định hơn (2005), có hỗ trợ ngôn ngữ truy vấn tích hợp LINQ (2008), hỗ trợ cho lập trình di động (2012, 2014)
+	3. Điều kiện về phần cứng (RAM, CPU): là hệ quản trị tốn tài nguyên. Những phiên bản cũ có bảo mật kém (1998) và tiêu tốn tài nguyên (2000). Những phiên kế tiếp dần ổn định hơn (2005) với sự ra đời của công nghệ .NET Framework (2003). Ở những phiên bản sau có thêm nhiều cải tiến với việc hỗ trợ ngôn ngữ truy vấn tích hợp LINQ (2008), hỗ trợ cho lập trình di động (2012, 2014).
 
 --------------------------------------------
 
 	4. Điều kiện về phần mềm:
 		- Hệ điều hành: Windows Server, Windows 11,...
-		- Collation: độ tương thích về đa ngôn ngữ khi lưu trữ dữ liệu (không phải ngôn ngữ trên giao diện) cho từng ô trong bảng (table), được sử dụng để lưu trữ, hiển thị, sắp xếp,... sao cho đúng nhất trong cơ sở dữ liệu. Với tiếng Việt, trong collation mặc định đã hỗ trợ Unicode nên không cần phải cài đặt thêm.
+		- Collation (hỗ trợ ngôn ngữ dữ liệu): độ tương thích về đa ngôn ngữ khi lưu trữ dữ liệu (không phải ngôn ngữ trên giao diện) cho từng ô trong bảng (table), được sử dụng để lưu trữ, hiển thị, tìm kiếm, sắp xếp,... sao cho đúng nhất trong cơ sở dữ liệu với tốc độ tốt nhất. Với tiếng Việt, trong collation mặc định (SQL_Latin1_General_CP1_CI_AS) đã hỗ trợ Unicode nên không cần phải cài đặt thêm.
 			Ví dụ: tiếng Ả Rập, Thái, Hàn, Nhật, Trung,...
 
 --------------------------------------------
 
 	5. Xác định cách tổ chức ổ đĩa cài đặt và lưu trữ dữ liệu:
 
-	Một cơ sở dữ liệu của SQLS gồm 2 loại file (đang hoạt động, cần sử dụng): data file (có thể có nhiều) và log file (chỉ có một chính).
+	Một cơ sở dữ liệu của SQL Server gồm 2 loại file (đang hoạt động, cần sử dụng): data file (có thể có nhiều) và log file (chỉ có một file chính).
 
-	Tổ chức ổ đĩa và lưu trữ dữ liệu sao cho tối ưu nhất: một Server có thể có rất nhiều ổ cứng, được tận dụng và tập hợp thành các nhóm (RAID) để tăng tốc độ, bộ an toàn cho dữ liệu khi bị hỏng ổ cứng. Để sử dụng được RAID, yêu cầu phần cứng (bo mạch chủ - mainboard) và hệ điều hành phải hỗ trợ.
-
-	* RAID (Redundant Arrays of Inexpensive Disks / Redundant Arrays of Independent Disks): một dãy gồm nhiều ổ đĩa độc lập nhau.
+	* RAID (Redundant Arrays of Inexpensive Disks / Redundant Arrays of Independent Disks): một dãy gồm nhiều ổ đĩa độc lập nhau (tạo thành một nhóm các ổ cứng).
 		-> Nhiều ổ đĩa vật lý (ổ cứng) kết hợp thành một thiết bị lưu trữ ảo.
+
+	Trong khả năng chịu lỗi và hư hỏng (fault tolerance), lưu trữ là một phần rất quan trọng. Nếu dữ liệu bị lỗi thì sẽ ảnh hưởng rất nghiêm trọng đến hoạt động của doanh nghiệp. Vì vậy, cần đảm bảo rằng dù có lỗi ổ cứng xảy ra thì cũng không bị mất dữ liệu. Một trong những cách tốt nhất để ngăn mất dữ liệu là RAID.
+
+	Tổ chức ổ đĩa và lưu trữ dữ liệu sao cho tối ưu nhất: một Server có thể có rất nhiều ổ cứng, được tận dụng và tập hợp thành các nhóm (RAID), đóng vai trò như một ổ cứng ảo (thành phần lưu trữ) để tăng tốc độ truy xuất trong quá trình hoạt động và đảm bảo bộ an toàn cho dữ liệu khi bị hỏng ổ cứng. Có thể thay nóng ổ cứng (hot swap) và chạy chức năng phục hồi mà không cần phải khởi động lại hệ điều hành. Để sử dụng được RAID, yêu cầu phần cứng (bo mạch chủ - mainboard) và hệ điều hành phải hỗ trợ (Windows Server).
+		-> Tăng tốc độ lưu trữ và truy xuất, đảm bảo an toàn cho dữ liệu.
 
 	* Vạch: 1 cặp đĩa (gồm 2 ổ cứng).
 
 --------------------
 
-		- RAID 1 - Disk mirroring (Từng cặp đĩa là bản sao của nhau, đảm bảo an toàn dữ liệu):
-			+ Cần tối thiểu 2 ổ cứng.
+		* RAID 0 - Disk striping (Chia dữ liệu theo vạch/phần đĩa): dữ liệu sẽ được chia ra nhiều phần (block) bằng nhau, trải đều trên các ổ cứng và cùng đồng thời được lưu/ghi xuống ổ cứng mà không cần phải đợi nhau; tương tự với đọc lên. Hệ điều hành sẽ tự động tính toán và phân chia để lưu trữ dữ liệu (cần sự hỗ trợ của phần cứng - mainboard).
+			- Cần tối thiểu 2 ổ cứng.
 
-			+ Dữ liệu được ghi/sao chép giống hệt nhau vào các ổ (Mirroring).
+			- Dung lượng: tận dụng được 100% tổng dung lượng ổ đĩa.
+
+			- Tốc độ đọc lên & ghi xuống tăng gấp n lần (xn) - nhanh nhất.
+
+			- Nhược điểm: không chịu được hư hỏng, 1 ổ cứng bị hư thì toàn bộ dữ liệu được lưu đồng thời ở những ổ cứng khác sẽ trở nên vô nghĩa vì không còn khả năng tái tạo lại dữ liệu gốc ban đầu (có nhưng không đủ dữ liệu nên không thể sử dụng được). Không nên sử dụng trong những môi trường với nhiệm vụ đặc biệt quan trọng về mặt dữ liệu.
+
+				Ví dụ: nếu có 1 khối dữ liệu và 3 ổ cứng, khối dữ liệu đó sẽ được chia thành 3 phần bằng nhau, mỗi phần sẽ đồng thời được lưu vào 1 ổ cứng. Tốc độ ghi xuống tăng gấp 3 lần, tốc độ đọc lên để tái tạo dữ liệu cũng tăng gấp 3 lần.
+
+			-> Lưu song song, tốc độ đọc lên và ghi xuống nhanh nhất
+
+--------------------
+
+		* RAID 1 - Disk mirroring (Bản sao): ổ cứng được tổ chức theo cặp, từng cặp đĩa là bản sao của nhau, đảm bảo an toàn dữ liệu.
+			- Cần tối thiểu 2 ổ cứng.
+
+			- Dữ liệu được ghi xuống/sao chép giống hệt nhau vào các ổ (Mirroring).
 				+ Lưu log file.
 				+ Lưu hệ điều hành.
 				+ Lưu SQL.
 					-> Vì những loại file này dung lượng để lưu trữ không tốn nhiều nhưng lại cần sự an toàn hơn là tốc độ.
 
-			+ Dung lượng: chỉ tận dụng được (mất) 50% tổng dung lượng ổ đĩa (bằng dung lượng của ổ đơn).
+			- Dung lượng: chỉ còn sử dụng được (mất) 50% tổng dung lượng ổ đĩa (bằng dung lượng của ổ đơn dù có ổ đôi).
 
-			+ Tốc độ đọc tăng gấp n lần (xn), tốc độ ghi không đổi.
+			- Tốc độ đọc lên tăng gấp n lần (xn) - thường hai là tối đa, tốc độ ghi xuống không đổi so với chỉ một ổ cứng.
 
-				Ví dụ: nguyên 1 khối dữ liệu được lưu đồng thời vào 2 ổ đĩa khác nhau, 1 dữ liệu được lưu 2 lần, tốn 2 lần dung lượng lưu trữ. Tốc độ ghi vẫn giữ nguyên (như 1 ổ đơn) nhưng tốc độ tái tạo (đọc) được tăng gấp đôi do lúc này dữ liệu được chia thành 2 phần bằng nhau và mỗi ổ đĩa đảm nhận việc tái tạo 1 phần.
-
---------------------
-
-		- RAID 0 - Disk striping (Lưu theo vạch/phần đĩa, song song, nhanh):
-			+ Cần tối thiểu 2 ổ cứng.
-
-			+ Dữ liệu sẽ được chia ra nhiều phần (block) bằng nhau và cùng đồng thời được lưu/ghi vào ổ cứng mà không cần phải đợi nhau; tương tự với đọc.
-
-			+ Dung lượng: tận dụng được 100% tổng dung lượng ổ đĩa.
-
-			+ Tốc độ đọc & ghi tăng gấp n lần (xn) - nhanh nhất.
-
-			+ Nhược điểm: không chịu được hư hỏng, 1 ổ cứng bị hư thì toàn bộ dữ liệu được lưu đồng thời ở những ổ cứng khác sẽ trở nên vô nghĩa vì không còn khả năng tái tạo lại dữ liệu. Không nên sử dụng trong những môi trường với nhiệm vụ đặc biệt quan trọng về mặt dữ liệu.
-
-				Ví dụ: nếu có 1 khối dữ liệu và 3 ổ cứng, khối dữ liệu đó sẽ được chia thành 3 phần bằng nhau, mỗi phần sẽ đồng thời được lưu vào 1 ổ cứng. Tốc độ ghi tăng gấp 3 lần, tốc độ đọc để tái tạo dữ liệu cũng tăng gấp 3 lần.
+				Ví dụ: nguyên 1 khối dữ liệu được lưu đồng thời vào 2 ổ đĩa khác nhau, 1 dữ liệu được lưu 2 lần, tốn 2 lần dung lượng lưu trữ. Tốc độ ghi xuống vẫn giữ nguyên (như 1 ổ đơn) nhưng tốc độ tái tạo (đọc lên) được tăng gấp đôi do lúc này dữ liệu được chia thành 2 phần bằng nhau và mỗi ổ đĩa đảm nhận việc tái tạo 1 phần.
 
 --------------------
 
-		- RAID 5 - Parity stripe (Cải tiến của RAID 0, cung cấp cơ chế khôi phục dữ liệu):
-			+ Cần tối thiểu 3 ổ cứng, các ổ cứng phải cùng dung lượng.
+		* RAID 5 - Parity stripe / Striping with Parity: cải tiến của RAID 0, cung cấp cơ chế khôi phục dữ liệu. Toàn bộ dữ liệu trước khi được ghi xuống hoặc đọc lên đều phải qua xử lý thông qua giải thuật Paritytrfg. Các Parity dùng để khôi phục dữ liệu được phân bố đồng đều trên tất cả các ổ đĩa cứng. Khi một ổ cứng bị lỗi và đã tiến hành thay mới, Parity sẽ được sử dụng để tự động tái tạo lại dữ liệu.
+			- Cần tối thiểu 3 ổ cứng, các ổ cứng phải cùng dung lượng.
 
-			+ Các Parity dùng để khôi phục dữ liệu được phân bố đồng đều trên tất cả các ổ đĩa cứng.
+			- Dung lượng: mất 1/n tổng dung lượng ổ đĩa (mất 1 và chỉ 1), càng nhiều ổ cứng thì càng phát huy được tác dụng.
 
-			+ Dung lượng: mất 1/n tổng dung lượng ổ đĩa (mất 1 và chỉ 1), càng nhiều ổ cứng thì càng phát huy được tác dụng.
+			- Tốc độ đọc lên & ghi xuống tăng gần ≈n lần, nhưng đọc lên bị giảm đi một chút do phải sinh thêm giải thuật parity.
 
-			+ Tốc độ đọc & ghi tăng gần ~n lần, nhưng đọc bị giảm đi một chút do phải sinh thêm giải thuật parity.
-
-			+ Ưu điểm: An toàn như RAID 1 nhưng tốc độ gần giống RAID 0. Ví dụ có 3 ổ đĩa, khi 1 ổ bị hư và tiến hành thay mới thì 2 ổ đĩa còn lại sẽ chạy một giải thuật tái tạo dữ liệu để tự động sinh dữ liệu cho ổ đĩa thứ 3 mới được thay.
+			- Ưu điểm: An toàn như RAID 1 nhưng tốc độ gần giống RAID 0. Ví dụ có 3 ổ đĩa, khi 1 ổ bị hư và tiến hành thay mới thì 2 ổ đĩa còn lại sẽ chạy một giải thuật tái tạo dữ liệu để tự động sinh dữ liệu cho ổ đĩa thứ 3 mới được thay.
 				-> Có khả năng chịu và tái tạo được dữ liệu khi 1 ổ đĩa bị hư.
 
 				Ví dụ: 1 khối dữ liệu lớn, trước khi được chia cho 3 ổ cứng thì sẽ đi qua giải thuật parity, giải thuật này sẽ chia khối dữ liệu gốc thành 3 khối (tương ứng với 3 ổ đĩa) với dung lượng nhỉnh hơn khối dữ liệu gốc (vì phải đính kèm thuật toán). Khi tái tạo, mỗi ổ cứng sẽ chạy giải thuật giải parity để tái tạo lại thành khối dữ liệu ban đầu.
 
 --------------------
 
-		- RAID 1+0 - Mirroring + Striping: hệ điều hành sẽ tự lo việc phân bố.
-			+ Cần tối thiểu 4-6 ổ cứng.
+		* RAID 1+0 - Mirroring + Striping: là sự kết hợp giữa RAID 1 và RAID 0. Một vạch đĩa được lưu theo kiểu ánh xạ của nhau bằng RAID 1 và giữa các vạch đĩa sử được lưu đồng thời với nhau bằng RAID 0. Hệ điều hành sẽ tự lo việc phân bố.
+			- Cần tối thiểu 4-6 ổ cứng.
 
-			+ Lưu data file.
+			- Lưu data file.
 
-			+ Dung lượng: mất 50% dung lượng.
+			- Dung lượng: mất 50% dung lượng.
 
-			+ Tốc độ ghi tăng n (vạch) lần, ví dụ: 6 ổ cứng, 3 vạch, tăng 3 lần.
+			- Tốc độ ghi xuống tăng n (vạch) lần.
+				Ví dụ: 6 ổ cứng, 3 vạch.
+					-> Tăng 3 lần.
 
-			+ Tốc độ đọc tăng n (ổ đĩa) lần / 2*n (vạch) lần, ví dụ: 6 ổ cứng, 3 vạch, tăng 6 lần.
+			- Tốc độ đọc lên tăng 2*n (vạch) lần / n (ổ cứng) lần.
+				Ví dụ: 6 ổ cứng, 3 vạch.
+					-> Tăng 6 lần.
 
-			+ Ưu điểm: đọc & ghi nhanh, chịu được hư ổ cứng khi trong mỗi ổ đĩa trong từng cặp bị hư.
+			- Ưu điểm: đọc lên & ghi xuống nhanh, chịu được hư ổ cứng khi trong mỗi ổ đĩa trong từng cặp bị hư.
 
-				Ví dụ: có 1 khối dữ liệu và 6 ổ cứng, 6 ổ cứng sẽ được tổ chức thành 3 vạch (mỗi vạch là 1 nhóm gồm 2 ổ cứng). Khi ghi thì dữ liệu sẽ được lưu song song vào 1 vạch (giống RAID 1). Khi đọc thì cả 2 ổ đĩa của 1 vạch sẽ cùng tái tạo dữ liệu (gióng RAID 0).
+				Ví dụ: có 1 khối dữ liệu và 6 ổ cứng, 6 ổ cứng sẽ được tổ chức thành 3 vạch (mỗi vạch là 1 nhóm gồm 2 ổ cứng). Khi ghi xuống thì dữ liệu sẽ được lưu song song vào 1 vạch (giống RAID 1). Khi đọc lên thì cả 2 ổ đĩa của 1 vạch sẽ cùng tái tạo dữ liệu (gióng RAID 0).
 
 --------------------------------------------
 
 	6. Xác định các instance sẽ cài đặt:
 
-		* Instance (thể hiện): lên kế hoạch/đang cài một Server mới thì được gọi là instance, nhưng khi cài xong rồi/có thể sử dụng được rồi thì được gọi là Server và có Server Name + Instance Name. Mỗi Database Server sau khi cài xong sẽ cho ra ít nhất một cặp dịch vụ chạy ngầm (SQL Server Database Engine và SQL Server Agent), nếu không có nhu cầu sử dụng thường xuyên thì nên chủ động ngừng (stop) dịch vụ (service).
-			-> Là Database Server (SQL Server) đang trong quá trình cài, cài xong sẽ được gọi là Database Server.
+		* Instance (thể hiện): lên kế hoạch/đang cài một Server mới thì được gọi là instance, nhưng khi cài xong rồi/có thể sử dụng được rồi thì được gọi là Server và có Server Name + Instance Name. Mỗi Database Server sau khi cài xong sẽ cho ra ít nhất một cặp dịch vụ chạy ngầm (SQL Server Database Engine và SQL Server Agent), nếu không có nhu cầu sử dụng thường xuyên thì nên chủ động ngừng (stop) dịch vụ (service) để tránh tiêu tốn tài nguyên của CPU, RAM,...
+			-> Là Database Server (SQL Server) đang trong quá trình cài, sau khi cài xong sẽ được gọi là Database Server.
 
 			Ví dụ: nhà đang xây được gọi là công trình, nhưng khi xây xong rồi thì được gọi là nhà.
 
 		Khi sử dụng thực tế thì chỉ sử dụng Server Name, Instance Name chỉ dùng để xem lại dấu tích cài/nguồn gốc của Server.
 
-		* Database Engine: là một trong nhiều loại dịch vụ/Server, là "động cơ" chính giúp quản lý và cung cấp xử lý dữ liệu cho các truy vấn/kết nối cơ sở dữ liệu.
+		* Database Engine (Server): là một trong nhiều loại dịch vụ, là "động cơ" chính giúp quản lý, phục vụ và cung cấp xử lý dữ liệu cho các truy vấn/kết nối cơ sở dữ liệu.
 		(Agent Service là dịch vụ song song để chạy các tác vụ tự động hoá).
 			-> Mục đích chính khi cài SQLS.
 
@@ -136,11 +145,13 @@ I. Lập kế hoạch cài đặt Microsoft SQL Server 2008:
 --------------------
 
 		* Có thể cài đặt:
-			- Default instance (không có hoặc chỉ có một): sau khi cài xong, không cần đặt tên cho Server vì tên của Server sẽ trùng với tên của máy tính (với điều kiện máy tính chưa từng cài Server với Default instance).
+			- Default instance (không có hoặc chỉ có một): sau khi cài xong, không cần đặt tên cho Server vì sau khi cài xong thì tên của Server sẽ trùng với tên của máy tính (với điều kiện máy tính chưa từng cài Server với Default instance).
 				-> Instance Name: MSSQLServer | Server Name: Tên-máy-tính
+					Ví dụ: Server Name: Acer-A715-71G
 
 			- Named instance (có thể có nhiều): người dùng phải đặt tên cho Instance.
 				-> Instance Name: Tên-Instance | Server Name: Tên-máy-tính\Tên-Instance
+					Ví dụ: Server Name: Acer-A715-71G\NHT
 
 		(Server Name quan trọng vì sau khi cài xong thì sẽ sử dụng tên Server chứ không phải tên Instance, khi kết nối với CSDL cũng sẽ phải sử dụng tên Server.)
 
@@ -158,11 +169,13 @@ Khi mới tạo ra, ví dụ: CSDL MyDB, sẽ có 2 file chính với tên mặc
 
 	- log data file (.ldf): lưu thông tin hoạt động của CSDL.
 
-	- primary data file (.mdf): là file lưu dữ liệu, tự động có mà không cần tạo.
+	- primary data file (.mdf): lưu dữ liệu, luôn luôn được tự động có khi tạo CSDL mà không cần tạo thủ công.
 
-	- secondary data file (.ndf): là file lưu dữ liệu, do người dùng tạo và có thể tạo nhiều file.
+	- secondary data file (.ndf): lưu dữ liệu, do người dùng tạo khi có nhu cầu và có thể tạo nhiều file.
 
 ==========================================================================
+
+(Lưu ý: phiên bản Express sẽ được ngầm tự động cài đặt nếu trước đó người dùng đã có cài đặt Visual Studio)
 
 III. Thực hiện cài đặt SQLS2008 phiên bản Express/Developer/Standard/Enteprise:
 
@@ -171,16 +184,21 @@ III. Thực hiện cài đặt SQLS2008 phiên bản Express/Developer/Standard/
 01. Planning: tài liệu.
 	- Hardware and Software Requirements: điều kiện yêu cầu về phần mềm và phần cứng.
 	- Security Documentation: tài liệu về bảo mật.
-	...
+	- Online Release Notes: tài liệu về phiên bản phát hành.
+	- ...
 
 --------------------
 
-* Cluster Server: một nhóm các Server.
+* Cluster Server: một nhóm các Database Server, được tận dụng để thuận tiện cho việc quản lý.
 
 02. Installation: nơi để cài mới Instance hoặc thêm tính năng mới.
-	- New SQL Server stand-alone installation or add features to an existing installation: cài mới một Instance, không liên quan gì đến Server cũ; hoặc thêm mới chức năng cho những Server đã được cài trước đó.
-	- New SQL Server failover cluster installation: dự phòng.
-	- Add node to a SQL Server failover cluster: thêm một Server mới với vào trong  cluster.
+	- New SQL Server stand-alone installation or add features to an existing installation: cài mới một Instance, không liên quan gì đến Server cũ; hoặc điều chỉnh chức năng cho những Server đã được cài trước đó.
+	- New SQL Server failover cluster installation: cài một Database Server để dự phòng.
+	- Add node to a SQL Server failover cluster: thêm một Server mới với vào trong nhóm cluster.
+	- Upgrade from SQL Server 2000 or SQL Server 2005: nâng cấp từ phiên bản SQL Server 2000 hoặc 2005 đã từng cài trước đó lên phiên bản 2008.
+	- Search for product updates: tìm trên Server của Microsoft để lấy những bản vá lỗi (service pack) cho SQL Server 2008.
+
+(Nếu tiến hành cài đặt trên một máy tính hoàn toàn mới, trước đó chưa từng cài Visual Studio, thì có thể sẽ bị thiếu .NET Framework. Lúc này, cần cài đặt .NET Framework phiên bản 2. hoặc 3. để phù hợp với SQL Server 2008, nhưng nếu cài đặt .NET Framework phiên bản cao hơn thì bị báo lỗi)
 
 --------------------
 
@@ -208,14 +226,14 @@ III. Thực hiện cài đặt SQLS2008 phiên bản Express/Developer/Standard/
 
 IV. Lựa chọn ở các bước trong quá trình cài đặt:
 
-** SQL Server [2008] Setup:
+** SQL Server [2008] Setup: phần mềm để thật sự bắt đầu cài đặt.
 
 01. Installation Type:
 
 	- Perform a new installation of SQL Server 2008: thực hiện cài một Instance mới.
 
 	- Add features to an existing instance of SQL Server 2008: thay đổi chức năng của các Instance hiện hành.
-		+ Khi được chọn sẽ hiển thị danh sách các Server đã có sẵn trên máy dưới dạng hộp tùy chọn (select box).
+		+ Khi được chọn sẽ hiển thị danh sách các Server (theo tên Instance) đã có sẵn trên máy dưới dạng hộp tùy chọn (select box).
 
 --------------------
 
@@ -271,23 +289,29 @@ IV. Lựa chọn ở các bước trong quá trình cài đặt:
 
 03. Feature Selection:
 
-	* Instance Features: chức năng của riêng Instance sắp sửa cài.
-		- Database Engine Services:
-			+ SQL Server Replication:
-			+ Full-Text Search:
-		- Analysis Services:
-		- Reporting Services:
+	* Instance Features: chức năng riêng của Instance sắp sửa cài.
+		- Database Engine Services: những chức năng sử dụng riêng cho Instance sắp cài.
+			+ SQL Server Replication: nhân bản dữ liệu sang nhiều nơi để tránh bị tấn công, đảm bảo về sao lưu và phục hồi,...
+			+ Full-Text Search: liên quan đến kỹ thuật tìm kiếm và trích xuất thông tin.
+		- Analysis Services: dịch vụ phân tích dữ liệu.
+		- Reporting Services: dịch vụ báo cáo dữ liệu.
 	* Shared Features: những chức năng sử dụng chung của các Instance.
+		- Integration Services: dịch vụ tích hợp dữ liệu.
+		- ...
 
 --------------------
 
 04. Instance Configuration:
 
-	- Default instance: nếu được chọn thì Instance ID sẽ mặc định là MSSQLSERVER, tên Server sau khi cài xong sẽ là Tên-máy-tính.
+	- Default instance: nếu được chọn thì Instance ID (tên Instance) sẽ mặc định là MSSQLSERVER (tên này được hiển thị trong thư mục C:\Program Files\Microsoft SQL Server), tên Server sau khi cài xong sẽ là Tên-máy-tính.
+		Ví dụ: Server Name: Acer-A715-71G
 
 	- Named instance: khi gõ tên thì Instance ID sẽ tự động được gõ theo, tên Server sau khi cài xong sẽ là Tên-máy-tính\Tên-Instance (tên Instance ID).
+		Ví dụ: Server Name: Acer-A715-71G\NHT
 
 	- Instance root directory: đường dẫn mặc định của Instance là C:\Program Files\Microsoft SQL Server
+	- Các công cụ đi kèm theo để phục vụ cho việc quản trị: đường dẫn mặc định là C:\Program Files (x86)\Microsoft SQL Server
+		+ Các folder bên trong: 80, 90, 100 là những thư viện liên quan đến phiên bản của SQL Server.
 
 --------------------
 
@@ -295,25 +319,30 @@ IV. Lựa chọn ở các bước trong quá trình cài đặt:
 
 	* Tab - Service Accounts:
 		- SQL Server Database Engine: dịch vụ chính để quản lý CSDL.
-		- SQL Server Agent: dịch vụ hỗ trợ cho tự động hoá.
+		- SQL Server Agent: dịch vụ hỗ trợ cho việc tự động hoá (các câu lệnh).
 
 			+ Use the same account for all SQL Server services: quyền của các tài khoản trên các dịch vụ (2 dịch vụ có thể do 2 người dùng khác nhau quản lý).
-				-> Account Name: NT AUTHORITY\SYSTEM
+				-> Account Name:
+						NT AUTHORITY\SYSTEM (nếu không nối mạng LAN)
+						NT AUTHORITY\NETWORK SERVICE (nếu có nối mạng LAN)
 
-		- SQL Server Browser: dịch vụ để duyệt (browse) các Server hiện có trên mạng LAN, có thể không cần sử dụng nếu nhớ tên Server.
+		- SQL Server Browser: dịch vụ để duyệt (browse) các Server hiện có trên mạng LAN, có thể không cần sử dụng nếu nhớ tên Server để nhập rồi tìm và sau lần đầu đăng nhập thì tên Server cũng được lưu lại mà không cần phải nhớ.
 
 	* Tab - Collation: nơi điều chỉnh bộ mã ngôn ngữ.
+		Ví dụ: SQL_Latin1_General_CP1_CI_AS, Latin1_General_CI_AS, Vietnamese_CI_AS,...
 
 --------------------
 
 06. Database Engine Configuration:
 
 * Authentication Mode:
-	- Windows authentication mode: chỉ cho phép người dùng truy cập thông qua xác thực của hệ điều hành Windows (Windows Local User và Domain Account).
+	- Windows authentication mode: chỉ cho phép người dùng truy cập thông qua xác thực của hệ điều hành Windows (Windows Local User và Domain Account), không yêu cầu nhập lại tài khoản và mật khẩu vì những thông tin này đã được yêu cầu nhập và xác thực khi đăng nhập vào máy tính.
+		* Domain: là dạng tổ chức một nhóm người dùng trên mạng LAN.
+		* Domain Controller: máy Server dùng để quản lý Domain, cho phép tạo và cấp tài khoản cho nhân viên. Sau này, khi đăng nhập thành công (Tên-domain\Tên-tài-khoản-domain) thì nhân viên có thể ngồi bất kỳ máy nào trong công ty mà thông tin cá nhân vẫn được giữ nguyên nhờ lấy dữ liệu từ máy quản lý Domain về, vì nó đã được lưu trên Domain từ trước đó sau khi người dùng đăng xuất.
 
-	- Mixed Mode: cho phép thêm loại người dùng do SQL Server tạo và quản lý. Tài khoản mặc định có tên là "sa" (system admin) và yêu cầu phải đặt mật khẩu.
+	- Mixed Mode: cho phép thêm loại người dùng do SQL Server tạo và quản lý bên cạnh loại người dùng do hệ điều hành Windows đã xác thực từ trước. Tài khoản mặc định có tên là "sa" (system admin) với quyền tối thương nên sẽ yêu cầu phải đặt mật khẩu trong quá trình cài đặt, nhưng sau khi cài xong thì có thể xoá mật khẩu nếu muốn.
 
-* Specify SQL Server administrators: có thể người cài SQL Server không phải là người có quyền truy cập vào SQL Server sau khi cài xong vì không thuộc vào nhóm Administrators trên SQL Server. Vì vậy, nếu muốn đăng nhập vào được thì phải thủ công tự thêm vào nhóm.
+* Specify SQL Server administrators: có thể người cài SQL Server chỉ thuộc nhóm Power User, không phải là người có quyền truy cập vào SQL Server sau khi cài xong vì không thuộc vào nhóm Administrators trên SQL Server. Vì vậy, nếu muốn đăng nhập vào được SQL Server thì phải thủ công tự thêm vào nhóm. Sau khi cài đặt Server xong, người dùng được thêm thủ công này sẽ trở thành người dùng có quyền tối thượng trên SQL Server.
 
 --------------------------------------------
 

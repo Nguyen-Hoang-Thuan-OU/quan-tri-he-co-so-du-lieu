@@ -4,9 +4,11 @@
 
 [GIAO THỨC KẾT NỐI]
 
-Cơ chế hoạt động của SQL Server và các hệ quản trị cơ sở dữ liệu khác là thông qua mạng LAN, theo giao thức Client-Server.
+Cơ chế hoạt động của SQL Server và các hệ quản trị cơ sở dữ liệu khác chủ yếu được thiết kế để sử dụng trong mạng LAN, theo giao thức Client-Server để đảm bảo tính bảo mật. Tuy vẫn có thể kết nối trực tiếp thông qua internet nhưng sẽ rất khó về mặt đảm bảo tính bảo mật.
 
-Người dùng không trực tiếp kết nối với Database Server để truy xuất dữ liệu mà chỉ tương tác với Website, Website sẽ giao tiếp với Web Server (Web Server tạo giao diện Web và hiển thị cho người dùng), Web Server được nối với Database Server thông qua mạng LAN (Database Server được cài đặt trên máy Server và phục vụ cho các Server khác thông qua mạng LAN).
+Người dùng không trực tiếp kết nối với Database Server để truy xuất dữ liệu mà chỉ tương tác với Website, Website sẽ giao tiếp với Web Server (Web Server tạo giao diện Website, thông qua internet và hiển thị cho người dùng), Web Server được nối với Database Server thông qua mạng LAN (Database Server được cài đặt trên máy Server và phục vụ cho các Server khác thông qua mạng LAN).
+
+Máy Database Server --|Phục vụ dữ liệu|-> Máy Web Server --|Tạo giao diện|-> Website --|Dữ liệu|-> Người dùng
 
 	-> Những chức năng cơ bản đều hoạt động trên mạng LAN thông qua cơ chế Client-Server.
 
@@ -15,7 +17,7 @@ Người dùng không trực tiếp kết nối với Database Server để truy
 ** Cấu hình SQL Server Network Communication:
 
 
-* Giữa máy Client và Server trong cùng mạng LAN (có thể cùng là 1 máy tính), SQL Server 2008 hỗ trợ 4 giao thức để Client và Server có thể truyền thông:
+* Giữa máy Client và Server trong cùng mạng LAN (có thể cùng là 1 máy tính), SQL Server 2008 hỗ trợ 4 giao thức để Client và Server có thể truyền thông và truyền dữ liệu qua lại ("bắt tay"):
 
 	- Shared Memory: giao thức truyền dữ liệu trong trường hợp duy nhất khi Client và Server là cùng 1 máy, không sử dụng qua mạng LAN, được sử dụng để truyền dữ liệu trong nội bộ máy tính (ứng dụng cài trên Server cần giao tiếp với Server) thay vì sử dụng giao thức TCP/IP để truyền qua mạng LAN. Tốc độ tức thời vì gần như không phải tốn thời gian để truyền.
 
@@ -50,7 +52,7 @@ Mỗi lần điều chỉnh giao thức trên Server thì phải khởi động 
 
 -----------------------
 
-* SQL Server Network Configuratio: liệt kê các Instance (Server) được cài trên máy với kiến trúc 32-bit. Chỉ cho phép Enabled hoặc Disabled.
+* SQL Server Network Configuration: liệt kê các Instance (Server) được cài trên máy với kiến trúc 32-bit. Chỉ cho phép Enabled hoặc Disabled.
 
 * SQL Native Client Configuration: Client với kiến trúc 32-bit. Cho phép Enabled hoặc Disabled và chỉnh thứ tự ưu tiên (Order) với Shared Memory mặc định sẽ là 1 nếu Enabled cho các ứng dụng chạy ở phía Client.
 

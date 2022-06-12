@@ -2,13 +2,13 @@
 
 =========================================================================
 
-Thao tác sao lưu cần được tự động vì có rất nhiều CSDL phải sao lưu theo đúng lịch bằng những chiến lược sao lưu khác nhau.
+Thao tác sao lưu cần được tự động vì có rất nhiều CSDL phải sao lưu định kỳ theo đúng lịch bằng những chiến lược sao lưu khác nhau. Đặc biệt là khi các công ty với nhiều chi nhánh ở nước ngoài, các múi giờ thường bị lệch nhau, không thể lúc nào cũng có người túc trực.
 	-> Cần tự động hoá các thao tác quản trị này.
 
-Ngoài tự động thực hiện các thao tác quản trị này theo đúng lịch, ta còn có thể tự động khi không biết lịch cụ thể, đôi khi sẽ có kèm theo điều kiện hoạt động và sự kiện.
+Ngoài tự động thực hiện các thao tác quản trị này theo đúng lịch, ta còn có thể tự động khi không biết lịch cụ thể, đôi khi sẽ có kèm theo điều kiện hoạt động và bẫy sự kiện (trigger).
 	Ví dụ 1: tự động gửi email để thông báo khi dung lượng ổ cứng đầy 80%.
 	Ví dụ 2: tự động gửi tin nhắn SMS để thông báo khi gặp lỗi [Mã lỗi].
-	Ví dụ 3: tự động gửi tin nhắn bằng lệnh Net Send trong mạng LAN để thông báo khi CPU sử dụng quá cao,...
+	Ví dụ 3: tự động gửi tin nhắn bằng lệnh Net Send trong mạng LAN để thông báo khi CPU sử dụng quá cao, RAM bị đầy,...
 
 ---------------------------------------------
 

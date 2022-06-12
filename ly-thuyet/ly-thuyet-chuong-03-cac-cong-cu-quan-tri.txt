@@ -4,43 +4,44 @@
 
 I. SQL Server Management Studio:
 
-Vì SQL Server không có giao diện, muốn quản trị thì phải sử dụng dòng lệnh, nên Microsoft phát hành thêm công cụ đồ hoạ để quản trị bên cạnh nhiều công cụ đồ hoạ giúp quản trị khác.
+Vì SQL Server không có giao diện, muốn quản trị thì phải sử dụng dòng lệnh nên Microsoft đã phát hành thêm công cụ đồ hoạ để quản trị bên cạnh nhiều công cụ đồ hoạ giúp quản trị khác.
+
 SQL Server Management Studio giúp quản lý người dùng, quyền, phiên làm việc, cơ sở dữ liệu,...
 	-> Là một công cụ rời để quản trị SQL Server thay vì sử dụng dòng lệnh.
 
-* Studio: trọn gói - đa năng, gồm nhiều công cụ với nhiều chức năng khác nhau, được tổ chức theo dạng giao diện Medium-dependent interface (MDI) với cửa sổ cha và nhiều cửa sổ con, cho phép float, dock hoặc tổ chức thành dạng tab.
+* Studio: trọn gói - đa năng, gồm nhiều công cụ với nhiều chức năng khác nhau, được tổ chức theo dạng giao diện Medium-dependent interface (MDI) với cửa sổ cha và nhiều cửa sổ con, cho phép lơ lửng ở bất kỳ đâu (floating), neo đậu cố định ở một góc phải/trái/trên/dưới (dockable), tự động ẩn/hiện (auto hide) hoặc tổ chức thành dạng thẻ (tabbed document).
 	-> Môi trường chuyên nghiệp chứa mọi thứ cần thiết, không cần phải cài thêm gì.
 
 => Tất cả các tác vụ đều có thể giải quyết bằng code, công cụ đồ hoạ chỉ giúp việc quản trị trở nên dễ dàng và nhanh chóng hơn (có thể sẽ thiếu chức năng).
 
 --------------------------------------------------
 
-SQL Server Management Studio thay thế hoàn toàn cho Enterprise Manager và Query Analyzer.
+SQL Server Management Studio (từ 2005) đã thay thế hoàn toàn cho Enterprise Manager và Query Analyzer.
 
 --------------------
 
-** Các cửa sổ (con) chức năng:
-	01. Object Explorer: cửa sổ thường được sử dụng nhất. Sử dụng menu ngữ cảnh nên khi nhấn chuột phải, tuỳ vào loại tập tin mà sẽ có những chức năng tương ứng.
+** Các cửa sổ (con) chức năng: trong menu [View]
+	01. Object Explorer: cửa sổ thường được sử dụng nhất. Sử dụng menu ngữ cảnh nên khi nhấn chuột phải, tuỳ vào loại tập tin mà sẽ có những chức năng tương ứng (khác nhau).
 
 	02. Code Editor: nơi để viết code, ví dụ: New Query.
 
-	03. Solution Explorer: nơi quản lý các dự án lập trình, quản lý Solution và Project giống như Visual Studio, một Solution sẽ gồm nhiều Project. Trong VS, mỗi Project có thể được viết bằng nhiều ngôn ngữ lập trình khác nhau (C, C#, VB,...) và các Project khác nhau khi build sẽ build chung trong một Solution.
+	03. Solution Explorer: nơi quản lý các dự án lập trình, quản lý Solution và Project giống như Visual Studio, một Solution sẽ gồm nhiều Project. Trong Visual Studio, mỗi Project có thể được viết bằng nhiều ngôn ngữ lập trình khác nhau (C, C#, VB,...) và các Project khác nhau khi build sẽ build chung trong một Solution.
 
-	04. Properties Window: cửa sổ thuộc tính của những đối tượng đang được chọn.
+	04. Properties Window: cửa sổ thuộc tính (cũng tuỳ vào ngữ cảnh) của những đối tượng đang được chọn.
 
-	05. Registered Servers: cửa sổ dùng để đăng ký Server lên một máy khác trong cùng mạng LAN để thực hiện một số thao tác quản trị cơ bản từ xa. Khi quản trị Server, rất ít khi được tiếp xúc với máy Server, Registered Servers sẽ giúp đăng ký máy Server lên máy tính cá nhân, cho phép điều khiển máy Server từ xa bằng cách đăng nhập qua mạng LAN với quyền người dùng tối thượng và thực hiện một số thao tác ở mức cơ bản.
+	05. Registered Servers: cửa sổ dùng để đăng ký Server lên một máy khác trong cùng mạng LAN (có thể là máy tính cá nhân) để thực hiện một số thao tác quản trị cơ bản từ xa. Khi quản trị Server, rất ít khi được tiếp xúc trực tiếp với máy Server, Registered Servers sẽ giúp đăng ký máy Server lên máy tính cá nhân, cho phép điều khiển máy Server từ xa bằng cách đăng nhập qua mạng LAN với quyền người dùng tối thượng của Instance và thực hiện một số thao tác ở mức cơ bản.
 
-	06. Bookmark Window: thường dành cho lập trình viên CSDL, giúp đánh dấu lại đoạn code đang viết để truy cập nhanh cho những lần sau.
+	06. Bookmark Window: một tiện ích nhỏ, thường dành cho lập trình viên CSDL, giúp đánh dấu lại đoạn code đang viết để truy cập nhanh cho những lần sau.
 
-	07. Toolbox: hộp đồ nghề dành riêng cho dân quản trị CSDL. Chỉ hiển thị khi đúng ngữ cảnh, gồm những công cụ liên quan đến việc quản trị.
+	07. Toolbox: "hộp đồ nghề" dành riêng cho dân quản trị CSDL. Chỉ hiển thị khi đúng ngữ cảnh, gồm những công cụ liên quan đến việc quản trị (dọn rác, thống kê, sao lưu, phục hồi, tạo kế hoạch bảo trì,...).
 
-	08. Object Explorer Details (Summary Window): cho biết chi tiết những phần được chọn trong Object Explorer để giúp cho việc thao tác trở nên tiện lợi hơn.
+	08. Object Explorer Details (Summary Window): cho biết chi tiết nội dung bên trong của những phần/đối tượng đang được chọn trong Object Explorer để giúp cho việc thao tác trở nên tiện lợi hơn.
 
-	09. Web Browser: trình duyệt web được nhúng sẵn. Trong những sản phẩm đời mới của Microsoft, file sách hướng dẫn (help) theo dạng e-book được ghép từ những file HTML (trang web) thường có đuôi .chm, cần HTML Viewer để đọc hướng dẫn dạng website.
+	09. Web Browser: trình duyệt web được nhúng sẵn. Trước những năm 2000 trở về trước, sách hướng dẫn của Microsoft có phần đuôi là .hlp và có thể đọc mà không cần trình duyệt web. Nhưng trong những sản phẩm đời mới của Microsoft, file sách hướng dẫn (help) theo dạng e-book (trực tuyến) được ghép từ những file HTML (trang web) thường có đuôi .chm, cần HTML Viewer để đọc hướng dẫn dạng website.
 
 	10. Template Explorer: thư viện mã nguồn có sẵn (code mẫu) dành cho lập trình viên, giúp lập trình viên không cần phải nhớ code mà chỉ cần sử dụng những mà nguồn đã được viết sẵn.
 
-	11. Toolbars: thanh công cụ, có thể cầm và kéo đi bất cứ đâu trong phạm vi cho phép. Mặc định sẽ hiện thanh công cụ Standard, nhưng tuỳ vào ngữ cảnh mà thanh công cụ tương ứng sẽ được tự động hiển thị.
+	11. Toolbars: thanh công cụ (gồm nút New Query và những công cụ khác), có thể cầm và kéo đi bất cứ đâu trong phạm vi cho phép. Mặc định sẽ hiện thanh công cụ Standard, nhưng tuỳ vào ngữ cảnh mà thanh công cụ tương ứng sẽ được tự động hiển thị.
 
 	12. Custom Toolbar: cho phép thêm một số nút vào thanh công cụ để cá nhân hoá thanh công cụ.
 
@@ -50,17 +51,17 @@ SQL Server Management Studio thay thế hoàn toàn cho Enterprise Manager và Q
 
 	15. Query Designer Toolbar: công cụ thiết kế truy vấn (kéo bảng, liên kết các bảng, thêm cột,...).
 
-	16. Source Control Toolbar: công cụ quản lý mã nguồn lập trình, có chức năng sao lưu, nén, phân quyền/chia sẻ file,...
+	16. Source Control Toolbar: công cụ quản lý mã nguồn lập trình, có chức năng nén, phân quyền/chia sẻ file, sao lưu,... lên Server để lưu trữ.
 
 	17. SQL Editor Toolbar: công cụ giúp viết code SQL, chạy và debug.
 
-	18. SQL Mobile Editor Toolbar: công cụ giúp viết code SQL chạy trên hệ điều hành Windows Mobile (Windows Phone).
+	18. SQL Mobile Editor Toolbar: công cụ giúp viết code SQL chạy trên hệ điều hành Windows Mobile (Windows Phone), đã biến mất kể từ phiên bản 2012 trở về sau.
 
 	19. SQL Server Analysis Services Editor Toolbar: dịch vụ cộng thêm, giúp phân tích dữ liệu.
 
 	20. Standard Toolbar: thanh công cụ luôn luôn hiển thị mặc định.
 
-	21. Table Designer Toolbar: công cụ giúp thiết kế bảng.
+	21. Table Designer Toolbar: công cụ giúp thiết kế bảng, tự động hiện khi tạo một bảng mới.
 
 	22. Text Editor Toolbar: công cụ giúp soạn văn bản.
 
@@ -78,7 +79,7 @@ SQL Server Management Studio thay thế hoàn toàn cho Enterprise Manager và Q
 
 II. Log File Viewer:
 
-Công cụ giúp xem nội dung của log file (thông tin hoạt động dưới dạng sự kiện), là một phần mềm rời, vừa sử dụng được cho hệ điều hành Windows và vừa sử dụng được cho SQL Server. Có thể mở từ Management Studio và có kiểm tra quyền đăng nhập trước khi cho phép xem (Node: Management -> SQL Server Logs).
+Công cụ giúp xem nội dung của log file (thông tin hoạt động dưới dạng sự kiện, đây là những file nhị phân đã được mã hoá), là một phần mềm rời, vừa sử dụng được cho hệ điều hành Windows và vừa sử dụng được cho SQL Server. Có thể mở từ Management Studio và có kiểm tra quyền đăng nhập (quyền cao) trước khi cho phép xem (Node: Management -> SQL Server Logs).
 
 ========================================================================
 
@@ -93,11 +94,11 @@ SQL Server Business Intelligence Development Studio (BI Studio) thật sự chí
 
 ========================================================================
 
-IV. SQL Server Profiler: phần mềm độc lập với Management Studio, là dịch vụ giúp tạo trace/track và theo dõi/truy vết dữ liệu, tiến trình (process), những đối tượng tình nghi có nguy cơ gậy hại đến hệ thống khiến CPU cao và hoạt động kém hiệu quả.
+IV. SQL Server Profiler: phần mềm độc lập với Management Studio, là dịch vụ chạy thường trực để giám sát hệ thống và đo thông số, giúp tạo trace/track và theo dõi/truy vết dữ liệu, tiến trình (process), những đối tượng tình nghi có nguy cơ gậy hại đến hệ thống Server khiến CPU cao, tốn bộ nhớ và hoạt động kém hiệu quả.
 
 ========================================================================
 
-V. Database Engine Tuning Advisor: phần mềm đưa ra lời khuyên để tinh chỉnh việc quản trị CSDL, thường liên quan đến dạng chuẩn, dư/thừa dữ liệu,...
+V. Database Engine Tuning Advisor: phần mềm tự động quét và đưa ra lời khuyên để tinh chỉnh việc quản trị CSDL, thường liên quan đến dạng chuẩn, dư/thừa dữ liệu,...
 	Ví dụ:
 		- Cột nào có thao tác tìm kiếm rất nhiều nhưng chưa có index.
 		- 2 bảng DonHang và LoaiHang có 1 cột trùng tên nhưng không phải là khoá ngoại/khoá chính tham khảo lẫn nhau.
@@ -105,7 +106,7 @@ V. Database Engine Tuning Advisor: phần mềm đưa ra lời khuyên để tin
 
 ========================================================================
 
-VI. SQL Server Configuration Manager: là công cụ rời, giúp tuỳ chỉnh những thông số cấu hình quan trọng của Server, chẳng hạn như giao thức kết nối, cấu hình mạng, alias, chế độ hoạt động,...
+VI. SQL Server Configuration Manager: là công cụ rời, giúp tuỳ chỉnh những thông số cấu hình quan trọng của Server, chẳng hạn như giao thức kết nối, cấu hình mạng, Server ảo (alias), chế độ hoạt động,...
 
 Có thể sử dụng ở máy Server và Client (SQL Native Client). Mặc định sẽ được cài khi cài Server, còn Client nếu muốn sử dụng thì phải cài thêm.
 
@@ -117,7 +118,7 @@ VII. Reporting Services Configuration Manager: chỉnh các thông số liên qu
 
 ========================================================================
 
-VIII. Command-Line Tools: quản trị CSDL bằng cửa sổ dòng lệnh thay vì giao diện đồ hoạ, hỗ trợ thao tác từ xa (remote). Có thể lưu lại các dòng lệnh và chạy bất cứ lúc nào.
+VIII. Command-Line Tools: quản trị CSDL bằng cửa sổ dòng lệnh thay vì giao diện đồ hoạ (Management Studio), thậm chí còn nhanh chóng, mạnh mẽ và hỗ trợ nhiều tính năng hơn so với giao diện đồ hoạ nếu người quản trị biết sử dụng dòng lệnh, hỗ trợ thao tác từ xa (remote) bằng cách telnet. Có thể lưu lại các dòng lệnh để chạy lại bất cứ lúc nào, có thể tinh chỉnh lại các dòng lệnh trước khi chạy, tiện lợi hơn so với việc thao tác trên giao diện đồ hoạ.
 
 
 

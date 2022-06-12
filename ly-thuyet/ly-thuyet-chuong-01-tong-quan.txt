@@ -1,6 +1,10 @@
 ﻿[CHƯƠNG 01: TỔNG QUAN VỀ QUẢN TRỊ HỆ CƠ SỞ DỮ LIỆU]
 
-** Có 3 cấp độ:
-	- Thiết kế CSDL.
+Database Management System (DBMS): hệ quản trị cơ sở dữ liệu
+
+Database Administrator (DBA): trong những hệ thống cơ sở dữ liệu tương đối quy mô, từ mức một doanh nghiệp trở lên, muốn cung cấp dữ liệu cho Website hoặc cho các phần mềm sử dụng trong nội bộ doanh nghiệp,... cần phải có người chịu trách nhiệm quản trị hệ thống cơ sở dữ liệu này bằng các thao tác phân quyền và quản lý rủi ro khi hư máy, ổ cứng,... để hệ thống cơ sở dữ liệu không bị đình trệ, hư hỏng và đặc biệt là tránh bị mất dữ liệu trong những tình huống không thể lường trước được.
+
+** Có 3 cấp độ trong lĩnh vực cơ sở dữ liệu:
+	- Thiết kế CSDL: thiết kế nên cơ sở dữ liệu sau khi đã trải qua các giai đoạn phỏng vấn, khảo sát,...
 	- Lập trình CSDL.
-	- Quản trị CSDL.
+	- Quản trị CSDL: hỗ trợ cho hệ thống hoạt động an toàn và hiệu quả.

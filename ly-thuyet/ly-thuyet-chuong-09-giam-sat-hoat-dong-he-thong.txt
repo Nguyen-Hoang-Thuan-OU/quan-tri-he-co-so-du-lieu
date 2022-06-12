@@ -2,15 +2,24 @@
 
 =========================================================================
 
-* Counter: thông số hoạt động của hệ thống, thường sử dụng phần mềm (của hệ điều hành) để đo lường.
+Sử dụng các công cụ lấy thông số hoạt động, tài nguyên sử dụng,... để nhanh chóng tìm được nguyên nhân khi có xảy ra hư hỏng và đưa ra quyết định. Hoặc so sánh thông số trước và sau khi thay đổi, cải tiến để đưa ra quyết định có nên áp dụng thay đổi, cải tiến hay không.
+
+* Counter: thông số hoạt động của hệ thống, có đơn vị riêng, có thể định lượng được, có giá trị cụ thể và thường được sử dụng phần mềm (của hệ điều hành) để đo lường.
 	1. Tên counter.
 	2. Ý nghĩa của counter.
-	3. Khuynh hướng giá trị càng cao hay càng thất thì sẽ càng tốt (so sánh so với mức khi hoạt động bình thường).
+	3. Khuynh hướng giá trị càng cao hay càng thấp thì sẽ càng tốt (so sánh so với mức khi hoạt động bình thường).
 	4. Ngưỡng an toàn nên có.
 
-Khi hệ thống đang hoạt động bình thường đã có sẵn các công cụ để thu thập thông số hoạt động có thể định lượng được, có giá trị cụ thể (counter). Trong SQL, nếu tính luôn cả phần cứng, phần mềm và những gì có liên quan thì sẽ có hơn 1000 counter, và có công cụ để lấy những thông số giá trị đó.
+Trong SQL, nếu tính luôn cả phần cứng, phần mềm và những gì có liên quan thì sẽ có hơn 1000 counter, và có công cụ để lấy những thông số hoạt động của hệ thống.
 
-Khi cố gắng sửa một vấn đề trên hệ thống nhưng không thành công thì nên trả hệ thống về trạng thái ban đầu như lúc chưa sửa để tránh tình trạng lỗi chồng lỗi do sửa lỗi đoán mò (mad clicker).
+---------------------------------------------
+
+* Khi hệ thống đang hoạt động bình thường:
+	- Nếu xảy ra sự cố, các thông số counter sẽ giúp người quản trị nhanh chóng tìm ra được nguyên nhân và đưa ra được những cách khắc phục lỗi.
+	- Nếu vẫn thấy chưa hài lòng với hiệu năng của hệ thống, muốn thử nghiệm những phương án và nâng cấp phần cứng để tối ưu hệ thống hơn nữa. Sử dụng và so sánh bộ thông số counter giữa trước và sau khi thực hiện thay đổi để đưa ra quyết định cuối cùng.
+		-> Sử dụng định lượng (thông số) thay vì định tính (cảm giác).
+
+(Khi cố gắng sửa một vấn đề trên hệ thống nhưng không thành công thì nên trả hệ thống về trạng thái ban đầu như lúc chưa sửa để tránh tình trạng lỗi chồng lỗi do sửa lỗi đoán mò (mad clicker).
 
 ---------------------------------------------
 

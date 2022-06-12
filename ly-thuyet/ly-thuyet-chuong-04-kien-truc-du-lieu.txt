@@ -11,22 +11,22 @@ File lưu dữ liệu của SQL Server được tổ chức sẵn cấu trúc l�
 
 =========================================================================
 
-** Một CSDL có 2 loại file: data files và log files.
+** Một CSDL trong SQL Server có 2 loại file: data files và log files.
 
 	* Data files chứa data (của table) và index: primary data file và secondary data file.
 		-> Nặng, có thể có một hoặc nhiều file.
 
-		- primary data file (.mdf): là file lưu dữ liệu, tự động có mà không cần tạo và chỉ có thể có 1 file.
+		- primary data file (.mdf): là file lưu dữ liệu (dữ liệu người dùng, dữ liệu phát sinh từ index, một số dữ liệu nhỏ để quản lý CSDL,...), luôn luôn được tự động có khi tạo CSDL mà không cần tạo thủ công và chỉ có thể có 1 file.
 			+ Chứa pointer chỉ đến các secondary data file (ndf).
 			+ Chứa 3 loại nội dung:
 				1. Dữ liệu: dữ liệu người dùng.
 				2. Index (mục lục): loại dữ liệu mà hệ thống tự sinh, lưu, cập nhật và huỷ khi tương tác dữ liệu trong một cột/bảng nào đó; dung lượng có thể lớn hơn dung lượng của dữ liệu; nên có từ bước thiết kế CSDL vì nó giúp tìm kiếm, sắp xếp, chạy nhanh hơn.
 					Ví dụ: thiết kế bảng SinhVien với index ở cột Ho và Ten vì 2 cột này thường xuyên được tìm kiếm, sắp xếp.
-				3. Thông tin quản trị hệ thống của CSDL (mục lục dữ liệu - metadata/catalog): quản lý người dùng, phân quyền, nơi dữ liệu,... của toàn bộ CSDL (dạng con trỏ).
+				3. Thông tin quản trị hệ thống của CSDL (mục lục dữ liệu - metadata/catalog): quản lý người dùng, phân quyền, nơi dữ liệu,... của toàn bộ CSDL (dạng con trỏ), chỉ riêng trong file .mdf mới có loại nội dung này. Vì vậy, không bao giờ có thể gán trạng thái Read-Only được (xem thêm ở phần filegroup bên dưới ↓).
 
 --------------------
 
-		- secondary data file (.ndf): là file lưu dữ liệu, do người dùng tạo và đặt tên, có thể tạo nhiều file.
+		- secondary data file (.ndf): là file lưu dữ liệu, do người dùng tạo và đặt tên khi có nhu cầu, có thể tạo nhiều file.
 			+ Chứa các đối tượng dữ liệu và user.
 			+ Có thể lưu khác ổ đĩa với primary data file.
 			+ Chỉ chứa 2 loại nội dung:
@@ -35,20 +35,20 @@ File lưu dữ liệu của SQL Server được tổ chức sẵn cấu trúc l�
 
 ----------------------------------------------
 
-	* Log files thông tin về các hoạt động và giao tác, dùng cho việc giám sát hệ thống và phục hồi dữ liệu.
-		-> Nhẹ, chỉ có một file đang hoạt động dù có thể có nhiều file.
+	* Log files thông tin về các hoạt động và giao tác (nhật ký), dùng cho việc giám sát hệ thống và phục hồi dữ liệu.
+		-> Nhẹ, chỉ có duy nhất một file đang hoạt động dù có thể có nhiều file (do lưu trữ mà có).
 
 		- log data file (.ldf): là file nhị phân đã được mã hoá và phân quyền, được dùng để giám sát hoạt động của người dùng, lưu thông tin hoạt động của CSDL, tham gia vào quá trình phục hồi dữ liệu, được tổ chức thành các sự kiện (thời gian khi nào, ai đăng nhập vào, thực hiện thao tác gì,...). Các thông tin mới sẽ được lưu nối đuôi, các thông tin đã cũ sẽ được tự động xoá nhờ giải thuật checkpoint nên file này rất nhỏ, nhẹ và không tăng dung lượng. Hoặc khi được sao lưu, file này sẽ luôn được xoá trống. Cơ chế lưu giống với cơ chế của hệ điều hành Windows, và có thể xem bằng phần mềm Log File Viewer.
 
 =========================================================================
 
 ** Các tuỳ chọn khi tạo mới một CSDL:
-	- Logical Name (tên luận lý): tên ngắn gọn, không chứa phần đuôi và không liên quan đến đường dẫn trên ổ đĩa, chỉ sử dụng trong nội bộ để phân biệt các CSDL với nhau, mặc định sẽ lấy Database Name làm Logical Name.
+	- Logical Name (tên luận lý): tên ngắn gọn, không chứa phần đuôi và không liên quan đến đường dẫn trên ổ đĩa, chỉ sử dụng trong nội bộ (trong ngữ cảnh cùng một CSDL) để phân biệt các file với nhau (và để gọi tên cho nhanh, hỗ trợ trong lập trình). Mặc định sẽ lấy Database Name làm Logical Name.
 
 --------------------
 
-	* Path: đường dẫn vật lý trên ổ đĩa.
-	* File Name: tên luận lý kèm phần mở rộng sau khi file đã được tạo xong.
+	* Path: đường dẫn vật lý của file trên ổ đĩa.
+	* File Name: tên luận lý (Logical Name) kèm phần mở rộng sau khi file đã được tạo xong.
 
 	- Physical Name (tên vật lý): tên phụ thuộc vào đường dẫn được chỉ định (đã bao gồm Path và File Name).
 
@@ -60,31 +60,36 @@ File lưu dữ liệu của SQL Server được tổ chức sẵn cấu trúc l�
 
 --------------------
 
-	- Filegroup: là một nhóm logic (luận lý) các data file (về mặt vật lý có thể không nằm cùng nhau trong cùng một phân vùng ổ đĩa mà chỉ là các shortcut dẫn đến data file đó), không đề cập đến log file (Not Applicable). Dùng để gom nhiều data file thành 1 nhóm và quản lý theo nhóm, giúp dễ dàng trong việc quản lý như bảo trì hệ thống, sao lưu và phục hồi dữ liệu. Quyền lưu bảng vào data file nào trong filegroup sẽ do hệ quản trị quyết định để "cân bằng tải".
+	* Nhóm logic (luận lý): về mặt vật lý có thể không nằm cùng nhau trong cùng một phân vùng ổ đĩa hay thư mục mà chỉ là các shortcut dẫn đến data file đó.
+
+	- Filegroup: là một nhóm logic (luận lý) các data file, không đề cập hay liên quan đến log file (Not Applicable) vì trong CSDL chỉ có duy nhất một log file đang hoạt động. Dùng để gom nhiều data file thành 1 nhóm và quản lý theo nhóm, giúp dễ dàng trong việc quản lý, bảo trì hệ thống, sao lưu và phục hồi dữ liệu. Quyền lưu bảng vào data file nào trong filegroup sẽ do hệ quản trị quyết định để "cân bằng tải".
 
 		* Có 2 loại filegroups: primary và user-defined.
 			+ primary filegroup: mặc định, luôn có sẵn khi mới tạo CSDL. Là nơi duy nhất được phép chứa file .mdf (primary data file) và được phép chứa thêm những file .ndf (secondary data file) khác. Chứa tất cả các system table. Không được phép gán thuộc tính Read-Only vì mục lục dữ liệu sẽ được liên tục cập nhật trong quá trình hoạt động.
-			+ user-defined filegroup: do người dùng tự tạo và đặt tên. Chỉ chứa các file .ndf, không được chứa file .mdf. Chứa các database objects. 1 cơ sở dữ liệu chứa tối đa 32,766 user-defined filegroups.
+			+ user-defined filegroup: do người dùng tự tạo và đặt tên. Chỉ chứa các file .ndf, không được chứa file .mdf. Chứa các database objects. 1 cơ sở dữ liệu chứa tối đa 32,766 user-defined filegroup.
 
 		* Mỗi filegroup sẽ có hai thuộc tính: Read-Only và Default (phải chứa ít nhất 1 data file).
-			+ Read-Only: dữ liệu của tất cả các file thuộc filegroup này sẽ bị khoá, không thể thêm-sửa-xoá mà chỉ có thể xem/đọc, dữ liệu vẫn vĩnh viên như cũ và không thể thay đổi dù có bị xoá. Primary filegroup không được phép Read-Only vì nó chứa file catalog dùng để lưu lại những thay đổi trong CSDL, nếu bị cấm thay đổi thì những file khác cũng không thể thêm-sửa-xoá dữ liệu. Có thể tận dụng Read-Only để sao lưu những file có dung lượng lớn nhưng không có sự thay đổi trong một khoảng thời gian dài.
-			+ Default: chỉ định một filegroup làm filegroup mặc định. Khi tạo mới một data file, nếu chưa gán filegroup cho data file này thì SQL Server sẽ tự gán vào filegroup mặc định.
+			+ Read-Only: để gán được Read-Only thì filegroup phải chứa ít nhất một data file. Sau khi gán Read-Only, dữ liệu của tất cả các file thuộc filegroup này sẽ bị khoá, không thể thêm-sửa-xoá mà chỉ có thể xem/đọc, dữ liệu sẽ vĩnh viên như cũ (lúc gán Read-Only) và không thể thay đổi dù có bị xoá. Có thể tận dụng Read-Only để sao lưu những file có dung lượng lớn nhưng không có sự thay đổi trong một khoảng thời gian dài bằng cách gom những data file đó vô chung một filegroup đã được tạo từ trước và gán filegroup đó là Read-Only. Từ đó, ta chỉ việc sao lưu những data file (thường xuyên có sự thay đổi nhưng không nhiều) thuộc những filegroup Read-Write khác.
+			(Primary filegroup không được phép gán Read-Only vì nó chứa file metadata/catalog (mục lục dữ liệu) dùng để lưu lại những thay đổi trong CSDL và dữ liệu này được cập nhật liên tục trong quá trình hoạt động, nếu bị cấm thay đổi thì những file khác cũng không thể thêm-sửa-xoá dữ liệu và toàn bộ thông tin hoạt động của hệ thống cũng không thể thay đổi.)
+			+ Default: chỉ định một filegroup làm filegroup mặc định, nhưng trước đó, để gán được Default thì filegroup đó phải chứa ít nhất một data file. Khi tạo mới một data file, nếu chưa gán filegroup cho data file này thì SQL Server sẽ tự gán vào filegroup mặc định.
 
 --------------------
 
-	- Initial Size (MB): chỉ định dung lượng khởi tạo ban đầu, dung lượng mà file sẽ chiếm trên ổ đĩa khi mới tạo file dù không chứa dữ liệu. Giúp tránh việc phân mảnh và phải tái cấu trục lại bộ nhớ, đảm bảo về mặt tốc độ.
+	- Initial Size (MB): chỉ định kích thước dung lượng khởi tạo ban đầu (giá trị mặc định có thể khác nhau ở tuỳ từng phiên bản của SQL Server), dung lượng mà file sẽ chiếm trọn trên ổ đĩa khi mới tạo file dù không chứa dữ liệu. Giúp tránh việc phân mảnh, tái cấu trục lại bộ nhớ và đường dẫn liên kết, đảm bảo về mặt tốc độ. Khi xoá, dữ liệu sẽ thật sự bị xoá (không giống như Microsoft Access) nhưng lại không thu hồi vùng nhớ.
 
 --------------------
 
-	- Autogrowth: chế độ tự động bung thêm khi sắp hết dung lượng, yêu cầu một khoảng thời gian để tái cấu trúc lại file và không gian lưu trữ. Nếu tắt, khi đầy thì file sẽ tự động dừng hoạt động và không có phép truy cập kể cả đọc file.
-		+ Theo phần trăm tổng dung lượng của file.
-		+ Theo dung lượng (MB) đồng đều cho mỗi lần tăng.
-			* Tăng đến khi ổ cứng hết dung lượng thì dừng.
+	- Autogrowth: chế độ tự động bung thêm khi sắp hết dung lượng, yêu cầu một khoảng thời gian để tái cấu trúc lại file và không gian lưu trữ. Nếu không sử dụng tự động tăng, khi đầy (khi đạt đến mức dung lượng khởi tạo) thì file sẽ tự động dừng hoạt động và không có phép truy cập kể cả đọc file.
+		+ File Growth:
+			* Theo phần trăm tổng phần trăm dung lượng của file (sau đó kiểm tra xem trong bao lâu thì lại tiếp tục đầy để từ đó tối ưu cho những lần tăng tiếp theo).
+			* Theo dung lượng (MB) đồng đều/cố định cho mỗi lần tăng.
+		+ Maximum File Size:
 			* Tăng đến số dung lượng được chỉ định (MB) thì dừng.
+			* Tăng đến khi ổ cứng chứa file đó hết dung lượng thì dừng (không tràn qua ổ khác).
 
 ----------------------------------------
 
-Ví dụ: khi tạo mới một CSDL với tên abc
+Ví dụ: khi tạo mới một CSDL với Database name: abc
 
 * Data files:
 	- Logical Name (tên luận lý): abc
@@ -117,26 +122,29 @@ Ví dụ: khi tạo mới một CSDL với tên abc
 =========================================================================
 
 ** Những lưu ý khi tạo data file:
-	- Nên tạo để dành (tạo dư) để file lâu bị đầy, giúp hạn chế việc bị giảm tốc độ truy xuất và phân mảnh.
+	- Nên tạo để dành (tạo dư nhưng đủ dùng) để file lâu bị đầy, giúp hạn chế việc bị giảm tốc độ truy xuất và phân mảnh, thường sẽ tạo dư gấp 1,5 lần nếu có khả năng dự đoán được tổng dung lượng và mức tăng của CSDL.
+	(Nếu phải tính kích cỡ và đưa ra con số gần chính xác thì ta có thể thực hiện 7 bước để dự đoán.
+		-> Không nên sử dụng, chỉ nên để tham khảo vì nó chỉ tính được trên những bảng dữ liệu của người dùng nhưng không thể tính được dung lượng của những thông tin do hệ thống tự sinh (index, mục lục,...) - những thông tin do hệ thống quyết định chứ người dùng không có quyền can thiệp.
+			=> Nên dự đoán bằng thực nghiệm: thêm dữ liệu giả vào CSDL để đo.)
 	- Nên chỉnh chức năng tự động tăng (autogrowth) nhưng chú ý đến max size để phù hợp với dung lượng ổ đĩa.
-	- Nên tạo nhiều file ndf trên nhiều ổ đĩa (còn trống nhiều) để chống phân mảnh và truy xuất nhanh (không phải tạo nhiều file ndf trên cùng 1 ổ cứng).
+	- Nên tạo nhiều file ndf trên nhiều ổ đĩa (còn trống nhiều) để chống phân mảnh và truy xuất nhanh nhờ đọc/ghi đồng thời (không phải tạo nhiều file ndf trên cùng 1 ổ cứng).
 	- Trên máy Server có tổ chức ổ đĩa theo các RAID:
 		+ Nếu tài chính không phải là vấn đề thì nên tổ chức dạng RAID 1+0 để lưu các transaction log, data, và index files.
-		+ Nếu muốn tiết kiệm chi phí, log files dùng RAID 10, data và index dùng RAID 5.
+		+ Nếu muốn tiết kiệm chi phí, log files sử dụng RAID 10, data và index sử dụng RAID 5.
 		+ Nếu để tiết kiệm chi phí thì những file nhỏ/nhẹ, hệ điều hành, phần mềm,... sẽ tổ chức dạng RAID 1 để đảm bảo an toàn về mặt dữ liệu.
 
 =========================================================================
 
-[KIẾN TRÚC SÂU BÊN TRONG CỦA TẬP TIN]
+[KIẾN TRÚC SÂU BÊN TRONG CỦA TẬP TIN - DATA FILE]
 
 ** Kiến trúc data file:
 	- mdf: data + index + metadata/catalog.
-	- Đơn vị lưu trữ vật lý được lưu theo cấu trúc gồm EXTENT và PAGE.
+	- Đơn vị lưu trữ vật lý của data file được lưu theo cấu trúc gồm PAGE và EXTENT (được chia ra thành các PAGE, nhiều PAGE sẽ hợp thành một EXTENT).
 
 ----------------------------------------
 
 ** Extent và Page:
-	- Page: đơn vị lưu trữ nhỏ nhất trong data file, là một khối liền nhau có kích thước 8KB. Dùng để chứa một số hàng của bảng, một bảng có thể tốn rất nhiều Page để chứa.
+	- Page: đơn vị lưu trữ nhỏ nhất trong data file, là một khối liền nhau có kích thước 8KB (Kilobyte). Dùng để chứa một số hàng của bảng, một bảng có thể tốn rất nhiều Page để chứa.
 		Có nhiều loại Page, phân loại theo dữ liệu của Page:
 			 + data page
 
@@ -156,32 +164,79 @@ Ví dụ: khi tạo mới một CSDL với tên abc
 
 --------------------
 
-	- Extent: là 8 Page liên tiếp nhau, có kích thước 64KB.
+	- Extent: là 8 Page liên tiếp nhau, có kích thước 8*8 = 64KB (Kilobyte).
 		Có 2 loại Extent:
-			+ Uniform extent (đồng bộ): cả 8 Page của Extent đều chứa dữ liệu của một đối tượng dữ liệu. Ví dụ: đều chứa dữ liệu của bảng KhachHang, DonHang,...
-			+ Mixed extent (hỗn hợp): có ít nhất 2 Page lưu 2 bảng dữ liệu khác nhau.
+			+ Uniform extent (đồng bộ): cả 8 Page của Extent đều chứa một dữ liệu của cùng một đối tượng dữ liệu.
+				Ví dụ: đều chứa dữ liệu của cùng một bảng hoặc KhachHang hoặc DonHang hoặc TheTinDung,...
+			+ Mixed extent (hỗn hợp): có ít nhất 2 Page lưu 2 bảng dữ liệu khác nhau (8 Page lưu dữ liệu của nhiều hơn 1 đối tượng - từ 2 trở lên).
+				Ví dụ: chứa dữ liệu của các bảng KhachHang, DonHang, HopDong, TheTinDung,...
+
+--------------------
+
+=> Một bảng (table) cần rất nhiều Page, có thể đến vài chục nghìn nếu dữ liệu lớn.
 
 ----------------------------------------
 
+** Có nhiều loại page, phân loại theo dữ liệu của page:
+	Có liên quan đến người dùng
+	- data page: là page chỉ lưu dữ liệu.
+	- index page: là page chỉ lưu index.
+	- Text/Image Pages: là page chứa kiểu/loại dữ liệu Text/Image (kiểu dữ liệu đặc biệt - kiểu nhúng, hiếm khi sử dụng vì dung lượng rất lớn), tương đương với kiểu Object trong Microsoft Access. Nhưng thông thường nên lưu đường dẫn của file thay nhúng vì nguyên cả file vào trong ô dữ liệu.
+
+	Không liên quan đến người dùng
+	- Global Allocation Map (GAM) and Secondary Global Allocation Map (SGAM) Pages: là những Page lưu thông tin cấu trúc/kiến trúc lưu trữ của data file, giúp quản lý những Page khác và truy xuất nhanh hơn. Có hai loại Page để quản lý:
+		+ Global Allocation Map (GAM):
+		+ Secondary Global Allocation Map (SGAM):
+	- Page Free Space (PFS) Pages: là những Page lưu thông tin không gian còn trống của những Page khác, hỗ trợ cho việc bố trí Page khi lưu dữ liệu. Mỗi Page sẽ có một mã riêng được gọi là Page Number. Danh sách sẽ được lưu theo dạng: Mã Page - dung lượng trống.
+	- Index Allocation Map (IAM) Pages: là Page lưu cấu trúc quản lý của các Index Page.
+	- Bulk Changed Map (BCM) Pages: là Page lưu việc import dữ liệu.
+	- Differential Changed Map (DCM) Pages: là Page lưu mã của các Page bị thay đổi dữ liệu tính từ lần sao lưu Full trước đó. Sau mỗi lần sao lưu Full thì các Page này đều bị xoá trống, kể từ đó, trong quá trình sử dụng, Page nào trong CSDL mà bị thay đổi nội dung (thêm-sửa-xoá) thì mã của Page đó sẽ được lưu vào đây. Nhờ loại Page này mà SQL Server mới có thêm tính năng sao lưu Differential khi nó sẽ chỉ lấy danh sách những mã bị thay đổi đi sao lưu thay vì sao lưu toàn bộ.
+
+=========================================================================
+
+[KIẾN TRÚC SÂU BÊN TRONG CỦA TẬP TIN - TRANSACTION LOG FILE]
+
 ** Transaction Log file:
-	- Sử dụng chung cấu trúc với hệ điều hành Windows, là file nhị phân đã được mã hoá và phân quyền.
-	- Có thể có 1 hay nhiều file ldf, thường chỉ có 1 file đang hoạt động.
+	- Sử dụng chung cấu trúc với hệ điều hành Windows, là file nhị phân đã được mã hoá và phân quyền (tương tự như data file) nên không thể xem nội dung bằng các chương trình xử lý văn bản bình thường, chẳng hạn như Notepad.
+	- Là nơi lưu trữ thông tin hoạt động theo dạng sự kiện (event): thời gian, Login tên gì, làm những hành động gì, trên đối tượng gì,...
+	- Là loại file nhỏ-nhẹ, chỉ lưu dữ liệu trong một số trường hợp đặc biệt, nhưng bình thường chỉ lưu thông tin hoạt động.
+	- Có thể có 1 hay nhiều file ldf, nhưng thường chỉ có 1 file đang hoạt động.
 	- Cấu trúc file ldf do SQL Server tạo tự động và không cho điều chỉnh.
-	- Không thể xem nội dung bằng các chương trình xử lý văn bản bình thường, chẳng hạn như Notepad.
+	- Phục vụ trong việc:
+		+ Bảo mật: kiểm soát hoạt động của CSDL bằng cách xem "ai đã làm gì vào khi nào" để kiểm tra những diễn biến của người dùng tương tác với CSDL này như thế nào.
+		+ Sao lưu và phục hồi dữ liệu: 
+
+----------------------------------------
+
+** Cách lưu trữ: chỉ có một file duy nhất và không thể lớn vĩnh viễn giống như data file.
+	- Đối với data file, dung lượng có thể tăng vĩnh viễn vì trong quá trình sử dụng thì dữ liệu sẽ không được tự động xoá. Để tránh việc bị đầy và tràn ổ cứng thì sau khi đã sao lưu dữ liệu, người quản trị sẽ tiến hành tạm xoá bớt những dữ liệu cũ một cách thủ công, nhưng nếu muốn xem lại dữ liệu cũ thì chỉ việc phục hồi.
+	- Nhưng đối với log file, vì mục tiêu của log file là để giám soát hoạt động và phục hồi dữ liệu nên khi hai mục tiêu đó không còn cần thiết (chẳng hạn như sau khi đã sao lưu dữ liệu vì khi này log file đã nằm trong file sao lưu) thì hệ thống sẽ tự động xoá dữ liệu. Log file không thể lớn mãi vì sẽ bị xoá trống sau mỗi lần sao lưu, hoặc cho dù không sao lưu thì sau một khoảng thời gian định kỳ theo như hệ quản trị tự đánh giá (đến thời điểm checkpoint) thì dữ liệu cũ cũng sẽ được tự động xoá, nhưng chỉ xoá dữ liệu cũ (không còn quan trọng nữa) chứ không xoá trống toàn bộ giống như khi sao lưu.
 
 
+	* Minh hoạ
+
+	-----------------------------------------------------------------------------------------
+	|											|
+	|											|
+	|	―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――	|
+	|	│	|	│///////////////////////////////////////////////│	│	|
+	------->│	|	│/////// Free space due to truncation //////////│	│--------	
+		│	|	│///////////////////////////////////////////////│	│
+		―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
+			▲	▲						▲
+			│	│						│
+			│	│						│
+			│	│ End of Logical Log				│
+			│							│
+			│							│
+			│ Last Checkpoint					│ Start of Logical Log
 
 
+	Dù không sao lưu, nhưng sau một khoảng thời gian định kỳ, phần mềm hệ quản trị cơ sở dữ liệu sẽ tự động sinh ra một Checkpoint được dùng để xem xét những thông tin/dữ liệu xưa cũ (nhất) để quyết định xoá trống (xoá phần đuôi).
 
+	Vì Log file lưu dữ liệu theo kiểu vòng tròn nên khi phần đầu (Start of Logical Log) tăng dung lượng (đầy - chạm biên) sẽ tự động quay về cuối, nếu chạm Last Checkpoint thì phần dữ liệu xưa cũ (phần đuôi) sẽ bị tự động bị xoá trống.
 
-
-
-
-
-
-
-
-
+	Log file cũng có tự động tăng dung lượng (autogrowth). Trong quá trình tăng dung lượng, nếu phần đầu chạm phần đuôi (End of Logical Log) do thiếu không gian lưu trữ thì dung lượng của log file sẽ tự động được tăng thêm cho đến khi phần đầu hết chạm phần đuôi thì sẽ không tăng nữa.
 
 
 

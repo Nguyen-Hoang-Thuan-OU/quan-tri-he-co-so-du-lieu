@@ -17,17 +17,17 @@ I. Lập kế hoạch cài đặt Microsoft SQL Server 2008:
 		* Chỉ phục vụ cho Server, đa phần khác nhau về hỗ trợ phần cứng: Windows Server, Windows Datacenter, Windows Advanced Server...
 
 			// Tuỳ serial key mà sẽ có những phiên bản tương ứng được cài đặt
-			- Enterpise: quy mô lớn nhất, khai thác được toàn bộ/vô hạn phần cứng của máy tính (RAM, CPU,...).
+			- Enterprise: quy mô lớn nhất, khai thác được toàn bộ/vô hạn phần cứng của máy tính (RAM, CPU,...).
 			- Standard: quy mô vừa, khác nhau về khả năng khai thác phần cứng.
 			- Workgroup: quy mô nhỏ, khác nhau về khả năng khai thác phần cứng.
 			- Web: một trường hợp đặc biệt, vẫn trích tính năng từ những phiên bản khác.
 
 
-		* Phục vụ cho máy tính cá nhân (PC) lẫn Server: Windows 7, Windows 11, Windows Server,...
+		* Phục vụ cho máy tính cá nhân (PC) lẫn Server: Windows 7, Windows 11, Windows Server...
 
-			- Developer: quy mô nhỏ, là phiên bản trả phí với đầy đủ các chức năng nhưng hỗ trợ phần cứng vẫn có hạn chế. Thường dành cho các nhà phát triển phần mềm để thử nghiệm các giải pháp về cơ sở dữ liệu, lập trình,... trên chính máy tính cá nhân của họ trước khi sử dụng trên máy Server hoặc thậm chí thử nghiệm trực tiếp trên máy Server. Không được phép sử dụng trong thương mại.
+			- Developer: quy mô nhỏ, là phiên bản trả phí với đầy đủ các chức năng nhưng hỗ trợ phần cứng vẫn có hạn chế. Thường dành cho các nhà phát triển phần mềm để thử nghiệm các giải pháp về cơ sở dữ liệu, lập trình... trên chính máy tính cá nhân của họ trước khi sử dụng trên máy Server hoặc thậm chí thử nghiệm trực tiếp trên máy Server. Không được phép sử dụng trong thương mại.
 
-			- Express: quy mô nhỏ nhất, công khai miễn phí trên Internet thông qua trang chủ của Microsoft và không phát hành đĩa vật lý hoặc file, tương thích với gần như mọi phiên bản của hệ điều hành từ Windows XP trở lên. Cho người dùng sử dụng thử với mục đích học tập, nghiệm cứu và thậm chí là thương mại nhưng sẽ bị hạn chế về tính năng, khả năng hỗ trợ phần cứng và dung lượng lưu trữ. Không đủ chức năng để hoạt động qua mạng LAN (Client/Server), nên chủ yếu khi cài trên máy nào thì sẽ là Server phục vụ cho các ứng dụng chạy trên chính máy đó. Tự động được cài kèm theo khi cài đặt Visual Studio.
+			- Express: quy mô nhỏ nhất, công khai miễn phí trên Internet thông qua trang chủ của Microsoft và không phát hành đĩa vật lý hoặc file, tương thích với gần như mọi phiên bản của hệ điều hành từ Windows XP trở lên. Cho người dùng sử dụng thử với mục đích học tập, nghiệm cứu và thậm chí là thương mại, nhưng sẽ bị hạn chế về tính năng, khả năng hỗ trợ phần cứng và dung lượng lưu trữ. Không đủ chức năng để hoạt động qua mạng LAN (Client/Server), nên chủ yếu khi cài trên máy nào thì sẽ là Server phục vụ cho các ứng dụng chạy trên chính máy đó. Tự động được cài kèm theo khi cài đặt Visual Studio.
 
 --------------------------------------------
 
@@ -127,20 +127,22 @@ I. Lập kế hoạch cài đặt Microsoft SQL Server 2008:
 
 	6. Xác định các instance sẽ cài đặt:
 
-		* Instance (thể hiện): lên kế hoạch/đang cài một Server mới thì được gọi là instance, nhưng khi cài xong rồi/có thể sử dụng được rồi thì được gọi là Server và có Server Name + Instance Name. Mỗi Database Server sau khi cài xong sẽ cho ra ít nhất một cặp dịch vụ chạy ngầm (SQL Server Database Engine và SQL Server Agent), nếu không có nhu cầu sử dụng thường xuyên thì nên chủ động ngừng (stop) dịch vụ (service) để tránh tiêu tốn tài nguyên của CPU, RAM,...
+		* Instance (thể hiện): lên kế hoạch/đang cài một Server mới thì được gọi là instance, nhưng khi cài xong rồi/có thể sử dụng được rồi thì được gọi là Server và có Server Name + Instance Name. Mỗi Database Server sau khi cài xong sẽ cho ra ít nhất một cặp dịch vụ chạy ngầm (SQL Server Database Engine và SQL Server Agent), nếu không có nhu cầu sử dụng thường xuyên thì nên chủ động ngừng (stop) dịch vụ (service) để tránh tiêu tốn tài nguyên của CPU, RAM...
 			-> Là Database Server (SQL Server) đang trong quá trình cài, sau khi cài xong sẽ được gọi là Database Server.
 
 			Ví dụ: nhà đang xây được gọi là công trình, nhưng khi xây xong rồi thì được gọi là nhà.
+			
+			(* Dịch vụ (service): hay đôi khi còn được gọi là Server, là nơi mà một ứng dụng cung cấp những dịch vụ cho bên khác dùng, thường chạy ngầm (background) thay vì hiển thị ra màn hình (foreground).)
 
 		Khi sử dụng thực tế thì chỉ sử dụng Server Name, Instance Name chỉ dùng để xem lại dấu tích cài/nguồn gốc của Server.
 
-		* Database Engine (Server): là một trong nhiều loại dịch vụ, là "động cơ" chính giúp quản lý, phục vụ và cung cấp xử lý dữ liệu cho các truy vấn/kết nối cơ sở dữ liệu.
+		* Database Engine (Server): là một trong nhiều loại dịch vụ, là "động cơ" chính giúp quản lý. Chạy ngầm để phục vụ và cung cấp xử lý dữ liệu cho các truy vấn / kết nối cơ sở dữ liệu.
 		(Agent Service là dịch vụ song song để chạy các tác vụ tự động hoá).
 			-> Mục đích chính khi cài SQLS.
 
 			+ SQL Server Compact Edition: phiên bản để quản lý cơ sở dữ liệu, phục vụ cho các máy chạy hệ điều hành Windows Mobile.
 
-		* Microsoft SQL Server Management Studio (MSSMS) cho phép quản lý nhiều Database Server (SQL Server) với tên khác nhau trên cùng một máy tính. Trong mỗi Server sẽ có nhiều cơ sở dữ liệu khác nhau, hệ thống quản lý người dùng khác nhau.
+		* Microsoft SQL Server Management Studio (MSSMS): là một công cụ rời, cho phép quản lý nhiều Database Server (SQL Server) với tên khác nhau trên cùng một máy tính bằng giao diện đồ hoạ người dùng (GUI). Trong mỗi Server sẽ có nhiều cơ sở dữ liệu khác nhau, hệ thống quản lý người dùng khác nhau.
 
 --------------------
 
@@ -155,11 +157,20 @@ I. Lập kế hoạch cài đặt Microsoft SQL Server 2008:
 
 		(Server Name quan trọng vì sau khi cài xong thì sẽ sử dụng tên Server chứ không phải tên Instance, khi kết nối với CSDL cũng sẽ phải sử dụng tên Server.)
 
+--------------------
+
+	* Lưu ý: giống như việc từ một lớp (Class) nhưng có thể tạo ra được nhiều đối tượng (Object).
+		- Ta có thể hình dung tập tin sqlservr.exe trong thư mục chứa SQL Server (C:\Program Files\Microsoft SQL Server\tên-instance-của-server\MSSQL\Binn) là một lớp và ta có thể tạo ra nhiều thể hiện (Instance) từ lớp này (mỗi Instance sẽ có một tập tin sqlservr.exe riêng, giúp mỗi Instacne có thể hoạt động độc lập trên RAM). Nghĩa là trên một Server sẽ có nhiều Instance và mỗi Instance sẽ sống độc lập với nhau.
+		- Vì được sinh ra để phục vụ dữ liệu, nên khi khởi chạy, một thể hiện sẽ được nạp vào RAM (cài đặt trên ổ đĩa nhưng sẽ chạy trong RAM).
+		- Mỗi thể hiện sẽ có những vùng RAM khác nhau và có một tên gọi (Instance name) khác nhau, nhưng vẫn có chung một mục đích là chờ yêu cầu xử lý dữ liệu.
+
 ==========================================================================
 
 II. Kết quả sau khi cài đặt:
 
 Sau cài xong, Server sẽ tạo ra một số CSDL mặc định thuộc về hệ thống: Master, Model, MSDB, TempDB, Resource.
+	- Giống như việc phần lõi của hệ điều hành Windows sẽ được chứa trong thư mục C:\Windows\System32, giúp quản lý toàn bộ hoạt động của Windows
+	- Một Database Engine cũng cần có những CSDL mặc định để quản lý hoạt động của chính mình.
 
 Một CSDL trong SQLS được lưu thành nhiều tập tin, giúp lưu được trên nhiều ổ cứng để chạy đồng thời và tăng tốc độ.
 
@@ -291,7 +302,7 @@ IV. Lựa chọn ở các bước trong quá trình cài đặt:
 
 	* Instance Features: chức năng riêng của Instance sắp sửa cài.
 		- Database Engine Services: những chức năng sử dụng riêng cho Instance sắp cài.
-			+ SQL Server Replication: nhân bản dữ liệu sang nhiều nơi để tránh bị tấn công, đảm bảo về sao lưu và phục hồi,...
+			+ SQL Server Replication: nhân bản dữ liệu sang nhiều nơi để tránh bị tấn công, đảm bảo về sao lưu và phục hồi...
 			+ Full-Text Search: liên quan đến kỹ thuật tìm kiếm và trích xuất thông tin.
 		- Analysis Services: dịch vụ phân tích dữ liệu.
 		- Reporting Services: dịch vụ báo cáo dữ liệu.
@@ -303,6 +314,11 @@ IV. Lựa chọn ở các bước trong quá trình cài đặt:
 
 04. Instance Configuration:
 
+		* Instance ID: vì hệ điều hành Windows có một cơ sở dữ liệu nội bộ (dạng cây phân cấp thư mục) để quản lý toàn bộ thông số hoạt động của máy tính, các ứng dụng đã cài, thiết bị phần cứng, hồ sơ người dùng... được gọi là Windows Registry. Hệ thống này sẽ lần theo Instance ID để tìm đến Instance name.
+			(* Tham khảo thêm: BDI202
+				- P1: https://youtu.be/OJKYvF-rVnk?t=4380
+				- P2: https://youtu.be/FywmKT3eFpQ?t=1259)
+		
 	- Default instance: nếu được chọn thì Instance ID (tên Instance) sẽ mặc định là MSSQLSERVER (tên này được hiển thị trong thư mục C:\Program Files\Microsoft SQL Server), tên Server sau khi cài xong sẽ là Tên-máy-tính.
 		Ví dụ: Server Name: Acer-A715-71G
 
@@ -317,7 +333,7 @@ IV. Lựa chọn ở các bước trong quá trình cài đặt:
 
 05. Server Configuration:
 
-	* Tab - Service Accounts:
+	* Tab - Service Accounts: nơi tạo và chọn các user đã có sẵn trong Windows và tuỳ chỉnh việc tự động khởi chạy các dịch vụ (Service).
 		- SQL Server Database Engine: dịch vụ chính để quản lý CSDL.
 		- SQL Server Agent: dịch vụ hỗ trợ cho việc tự động hoá (các câu lệnh).
 
@@ -328,19 +344,22 @@ IV. Lựa chọn ở các bước trong quá trình cài đặt:
 
 		- SQL Server Browser: dịch vụ để duyệt (browse) các Server hiện có trên mạng LAN, có thể không cần sử dụng nếu nhớ tên Server để nhập rồi tìm và sau lần đầu đăng nhập thì tên Server cũng được lưu lại mà không cần phải nhớ.
 
-	* Tab - Collation: nơi điều chỉnh bộ mã ngôn ngữ.
+	* Tab - Collation: nơi điều chỉnh bộ mã ngôn ngữ, có liên quan đén sắp xếp và tìm kiếm dữ liệu (ví dụ: có phân biệt chữ hoa và thường hay không...).
 		Ví dụ: SQL_Latin1_General_CP1_CI_AS, Latin1_General_CI_AS, Vietnamese_CI_AS,...
 
 --------------------
 
 06. Database Engine Configuration:
 
-* Authentication Mode:
+* Authentication Mode: cơ chế bảo mật và phân quyền, quy định những ai được phép truy cập vào Server để xem dữ liệu.
+
 	- Windows authentication mode: chỉ cho phép người dùng truy cập thông qua xác thực của hệ điều hành Windows (Windows Local User và Domain Account), không yêu cầu nhập lại tài khoản và mật khẩu vì những thông tin này đã được yêu cầu nhập và xác thực khi đăng nhập vào máy tính.
 		* Domain: là dạng tổ chức một nhóm người dùng trên mạng LAN.
 		* Domain Controller: máy Server dùng để quản lý Domain, cho phép tạo và cấp tài khoản cho nhân viên. Sau này, khi đăng nhập thành công (Tên-domain\Tên-tài-khoản-domain) thì nhân viên có thể ngồi bất kỳ máy nào trong công ty mà thông tin cá nhân vẫn được giữ nguyên nhờ lấy dữ liệu từ máy quản lý Domain về, vì nó đã được lưu trên Domain từ trước đó sau khi người dùng đăng xuất.
 
-	- Mixed Mode: cho phép thêm loại người dùng do SQL Server tạo và quản lý bên cạnh loại người dùng do hệ điều hành Windows đã xác thực từ trước. Tài khoản mặc định có tên là "sa" (system admin) với quyền tối thương nên sẽ yêu cầu phải đặt mật khẩu trong quá trình cài đặt, nhưng sau khi cài xong thì có thể xoá mật khẩu nếu muốn.
+	- Mixed Mode: cho phép thêm loại người dùng do SQL Server tạo và quản lý bên cạnh loại người dùng do hệ điều hành Windows đã xác thực từ trước.
+		+ Tài khoản mặc định có tên là "sa" (System Administrator) với quyền tối thượng nên sẽ yêu cầu phải đặt mật khẩu trong quá trình cài đặt, nhưng sau khi cài xong thì có thể xoá mật khẩu nếu muốn. Giống như tài khoản root bên Linux.
+		+ Ngoài ra, chế độ này còn cho phép một máy tính khác trong cùng mạng LAN có thể truy cập và lấy dữ liệu thông qua cơ chế Client/Server.
 
 * Specify SQL Server administrators: có thể người cài SQL Server chỉ thuộc nhóm Power User, không phải là người có quyền truy cập vào SQL Server sau khi cài xong vì không thuộc vào nhóm Administrators trên SQL Server. Vì vậy, nếu muốn đăng nhập vào được SQL Server thì phải thủ công tự thêm vào nhóm. Sau khi cài đặt Server xong, người dùng được thêm thủ công này sẽ trở thành người dùng có quyền tối thượng trên SQL Server.
 
@@ -348,33 +367,38 @@ IV. Lựa chọn ở các bước trong quá trình cài đặt:
 
 ** SQL Server [2019] Setup:
 
-* Tải về máy: phiên bản Express
-	- SQL2019-SSEI-Expr.exe (Bootstrap): phần mồi để cài Server và Client.
+* Tải về máy: phiên bản Express.
+
+	1. SQL2019-SSEI-Expr.exe (Bootstrap): phần mồi để cài Server và Client, được tải về thông qua trang chủ của Microsoft.
+	
 		* Select an installation type:
-			+ Basic: tự động tải và kích hoạt cài.
-			+ Custom: tự động tải và kích hoạt cài.
-			+ Download Media: tự động tải và lưu file cài lại trên máy.
+			+ Basic: tự động tải và kích hoạt cài đặt SQL Server Database Engine (Server) với những cấu hình mặc định và đôi khi sẽ có thể bị thiếu những thư viện đối với những yêu cầu sử dụng đặc biệt.
+			+ Custom: tự động tải và cho phép lựa chọn các tuỳ chọn trong quá trình cài đặt, sẽ chi tiết nhưng đồng thời cũng sẽ tốn thời gian hơn.
+			+ Download Media: tự động tải và lưu trữ file cài đặt lại trên máy.
 
 		* Package:
-			+ Express Core: lõi để xử lý dữ liệu.
-			+ Express Advanced: bản full.
-			+ LocalDB: phiên bản gọn-nhẹ, nhúng CSDL vào thiết bị di động, cho phép đem đi mà không cần cài đặt (portable), đủ dùng để lưu trữ và xử lý cơ bản.
+			+ Express Core: phần lõi tối thiểu để xử lý dữ liệu (vì cơ sở dữ liệu là để xử lý dữ liệu).
+			+ Express Advanced: bản đầy đủ.
+			+ LocalDB: phiên bản gọn-nhẹ, nhúng CSDL vào những thiết bị di động, cho phép đem đi mà không cần cài đặt (portable), chỉ đủ sử dụng để lưu trữ và xử lý cơ bản.
 
-	- SQLEXPRADV_x64_ENU.exe (Server): 
+	2. SQLEXPRADV_x64_ENU.exe (Server): phần chính để xử lý dữ liệu, được tải về thông qua phần mồi. Khi thực thi, tập tin sẽ yêu cầu chọn đường dẫn để giải nén, sau khi giải nén xong sẽ hiển thị cửa sổ SQL Server Installation Center.
 
-	- SSMS-Setup-ENU.exe (Client): giao tiếp với Server
+	3. SSMS-Setup-ENU.exe (Client): phần có nhiệm vụ giao tiếp với Server bằng giao diện đồ hoạ người dùng (GUI), được tải về thông qua trang chủ của Microsoft.
 
 --------------------
 
 * Feature Selection:
-	- SQL Server Replication: nhân bản data sang nhiều nơi để tránh bị tấn công, đảm bảo về sao lưu và phục hồi,...
+	- SQL Server Replication: nhân bản dữ liệu sang nhiều nơi để tránh bị tấn công, đảm bảo về sao lưu và phục hồi...
 
 	- Machine Learning Service...: các dịch vụ liên quan đến máy học và các ngôn ngữ lập trình liên quan (Python, Java, R).
 
 	- Full-Text...: liên quan đến kỹ thuật tìm kiếm và trích xuất thông tin.
 
---------------------
+--------------------------------------------
 
+* Lưu ý: nếu việc cài đặt không thành công.
+	- Thường do thiếu các bộ thư viện (.NET Framework).
+	- Ta có thể xem lại nhật kí cài đặt (log) tại: C:\Program Files\Microsoft SQL Server\số-phiên-bản-của-SQL-Server\Setup Bootstrap\Log (ví dụ: SQLS 2008 là 100, SQLS 2019 là 150)
 
 
 

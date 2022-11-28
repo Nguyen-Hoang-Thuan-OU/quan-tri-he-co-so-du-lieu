@@ -9,7 +9,7 @@ Vì SQL Server không có giao diện, muốn quản trị thì phải sử dụ
 SQL Server Management Studio giúp quản lý người dùng, quyền, phiên làm việc, cơ sở dữ liệu,...
 	-> Là một công cụ rời để quản trị SQL Server thay vì sử dụng dòng lệnh.
 
-* Studio: trọn gói - đa năng, gồm nhiều công cụ với nhiều chức năng khác nhau, được tổ chức theo dạng giao diện Medium-dependent interface (MDI) với cửa sổ cha và nhiều cửa sổ con, cho phép lơ lửng ở bất kỳ đâu (floating), neo đậu cố định ở một góc phải/trái/trên/dưới (dockable), tự động ẩn/hiện (auto hide) hoặc tổ chức thành dạng thẻ (tabbed document).
+* Studio: trọn gói - đa năng, gồm nhiều công cụ với nhiều chức năng khác nhau, cho phép thực hiện nhiều công việc khác nhau. Được tổ chức theo dạng giao diện Medium-dependent interface (MDI) với cửa sổ cha và nhiều cửa sổ con, cho phép lơ lửng ở bất kỳ đâu (floating), neo đậu cố định ở một góc phải/trái/trên/dưới (dockable), tự động ẩn/hiện (auto hide) hoặc tổ chức thành dạng thẻ (tabbed document).
 	-> Môi trường chuyên nghiệp chứa mọi thứ cần thiết, không cần phải cài thêm gì.
 
 => Tất cả các tác vụ đều có thể giải quyết bằng code, công cụ đồ hoạ chỉ giúp việc quản trị trở nên dễ dàng và nhanh chóng hơn (có thể sẽ thiếu chức năng).

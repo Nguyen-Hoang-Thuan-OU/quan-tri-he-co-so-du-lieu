@@ -4,9 +4,9 @@
 
 I. SQL Server Management Studio:
 
-Vì SQL Server không có giao diện, muốn quản trị thì phải sử dụng dòng lệnh nên Microsoft đã phát hành thêm công cụ đồ hoạ để quản trị bên cạnh nhiều công cụ đồ hoạ giúp quản trị khác.
+Vì SQL Server không có giao diện và chỉ hoạt động ngầm (background), nên để kết nối trực tiếp với cơ sở dữ liệu và tương tác được dữ liệu thì phải sử dụng ngôn ngữ lập trình, hoặc muốn quản trị thì phải sử dụng dòng lệnh. Vì vậy, Microsoft đã phát hành thêm công cụ đồ hoạ (GUI - foreground) để quản trị bên cạnh nhiều công cụ đồ hoạ giúp quản trị khác.
 
-SQL Server Management Studio giúp quản lý người dùng, quyền, phiên làm việc, cơ sở dữ liệu,...
+SQL Server Management Studio giúp thực thi các mã lệnh Transact-SQL, thực hiển quản lý người dùng, quyền, phiên làm việc, cơ sở dữ liệu...
 	-> Là một công cụ rời để quản trị SQL Server thay vì sử dụng dòng lệnh.
 
 * Studio: trọn gói - đa năng, gồm nhiều công cụ với nhiều chức năng khác nhau, cho phép thực hiện nhiều công việc khác nhau. Được tổ chức theo dạng giao diện Medium-dependent interface (MDI) với cửa sổ cha và nhiều cửa sổ con, cho phép lơ lửng ở bất kỳ đâu (floating), neo đậu cố định ở một góc phải/trái/trên/dưới (dockable), tự động ẩn/hiện (auto hide) hoặc tổ chức thành dạng thẻ (tabbed document).

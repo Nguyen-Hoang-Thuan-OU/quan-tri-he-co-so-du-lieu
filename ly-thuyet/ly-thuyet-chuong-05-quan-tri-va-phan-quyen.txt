@@ -311,7 +311,7 @@ XV. SQL Server Encryption (chủ đề riêng)*: rất ít hoặc gần như kh�
 
 =========================================================================
 
-XVI. Các lời khuyên, kinh nghiệm thực tế/Tuyệt chiêu (Best Practices)
+XVI. Các lời khuyên, kinh nghiệm thực tế / tuyệt chiêu (Best Practices)
 
 01. Sử dụng mật khẩu mạnh: định nghĩa về mật khẩu mạnh giống như trong hệ điều hành Windows. Thường gồm từ 3-4 loại ký tự trở lên: chữ thường (a-z) + chữ hoa (A-Z) + ký số (chữ số, 0-9) + biểu tượng (ký hiệu đặc biệt, $#@). Số lượng ký tự thường từ 7-8 trở lên.
 

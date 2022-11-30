@@ -171,6 +171,7 @@ II. Kết quả sau khi cài đặt:
 Sau cài xong, Server sẽ tạo ra một số CSDL mặc định thuộc về hệ thống: Master, Model, MSDB, TempDB, Resource.
 	- Giống như việc phần lõi của hệ điều hành Windows sẽ được chứa trong thư mục C:\Windows\System32, giúp quản lý toàn bộ hoạt động của Windows
 	- Một Database Engine cũng cần có những CSDL mặc định để quản lý hoạt động của chính mình.
+	-> Dữ liệu để hệ thống hoá và quản lý những dữ liệu khác - siêu dữ liệu (Metadata).
 
 Một CSDL trong SQLS được lưu thành nhiều tập tin, giúp lưu được trên nhiều ổ cứng để chạy đồng thời và tăng tốc độ.
 

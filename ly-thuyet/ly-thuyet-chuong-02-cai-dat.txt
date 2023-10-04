@@ -2,7 +2,9 @@
 
 ==========================================================================
 
-Microsoft SQL Server (và các hệ quản trị cơ sở dữ liệu chuyên nghiệp khác) là một loại phần mềm đặc biệt mà khi cài đặt lần đầu thành công sẽ có được một Database Server. Không giống như những phần mềm khác, ở những lần sau, khi tiếp tục chạy lại bộ cài đặt, thay vì yêu câu ghi đè, cập nhật phiên bản, xoá phiên bản cũ để cài mới hoặc thậm chí không cho cài đặt,... thì Microsoft SQL Server lại cho ra thêm những Database Server (Server cung cấp dữ liệu - dịch vụ phục vụ cơ sở dữ liệu) mới.
+Microsoft SQL Server (và các hệ quản trị cơ sở dữ liệu chuyên nghiệp khác) là một loại phần mềm đặc biệt mà khi cài đặt lần đầu thành công sẽ có được một Database Server (Server cung cấp dữ liệu - dịch vụ phục vụ cơ sở dữ liệu). Không giống như những phần mềm khác, ở những lần sau, khi tiếp tục chạy lại bộ cài đặt, thay vì yêu câu ghi đè, cập nhật phiên bản, xoá phiên bản cũ để cài mới hoặc thậm chí không cho cài đặt,... thì Microsoft SQL Server lại cho ra thêm những Database Server mới.
+
+* Lưu ý: Ở những phiên bản cũ (trước 2015), nếu muốn sử dụng Visual Studio để kết nối với Microsoft SQL Server, phiên bản của Visual Studio cần phải mới hơn phiên bản của Microsoft SQL Server.
 
 ==========================================================================
 

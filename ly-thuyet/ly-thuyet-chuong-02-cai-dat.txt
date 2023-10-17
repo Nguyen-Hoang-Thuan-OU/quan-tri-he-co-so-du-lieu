@@ -155,16 +155,19 @@ I. Lập kế hoạch cài đặt Microsoft SQL Server 2008:
 
 			- Named instance (có thể có nhiều): người dùng phải đặt tên cho Instance.
 				-> Instance Name: Tên-Instance | Server Name: Tên-máy-tính\Tên-Instance
-					Ví dụ: Server Name: Acer-A715-71G\NHT
+					Ví dụ: Server Name: Acer-A715-71G\DULIEUBANHANG
+
+			- Instance ID: Tên được Windows sử dụng để lưu trong Registry, giúp ánh xạ giữa đường dẫn của Server trên ở đĩa và tên Instance.
 
 		(Server Name quan trọng vì sau khi cài xong thì sẽ sử dụng tên Server chứ không phải tên Instance, khi kết nối với CSDL cũng sẽ phải sử dụng tên Server.)
 
 --------------------
 
 	* Lưu ý: giống như việc từ một lớp (Class) nhưng có thể tạo ra được nhiều đối tượng (Object).
-		- Ta có thể hình dung tập tin sqlservr.exe trong thư mục chứa SQL Server (C:\Program Files\Microsoft SQL Server\tên-instance-của-server\MSSQL\Binn) là một lớp và ta có thể tạo ra nhiều thể hiện (Instance) từ lớp này (mỗi Instance sẽ có một tập tin sqlservr.exe riêng, giúp mỗi Instacne có thể hoạt động độc lập trên RAM). Nghĩa là trên một Server sẽ có nhiều Instance và mỗi Instance sẽ sống độc lập với nhau.
-		- Vì được sinh ra để phục vụ dữ liệu, nên khi khởi chạy, một thể hiện sẽ được nạp vào RAM (cài đặt trên ổ đĩa nhưng sẽ chạy trong RAM).
-		- Mỗi thể hiện sẽ có những vùng RAM khác nhau và có một tên gọi (Instance name) khác nhau, nhưng vẫn có chung một mục đích là chờ yêu cầu xử lý dữ liệu.
+		- Ta có thể hình dung tập tin sqlservr.exe trong thư mục chứa SQL Server (C:\Program Files\Microsoft SQL Server\tên-instance-của-server\MSSQL\Binn) là một lớp và ta có thể tạo ra nhiều thể hiện (Instance) từ lớp này.
+	 	 	+ Mỗi Instance sẽ có một tên riêng (Instance Name), một tập tin sqlservr.exe riêng (trong thư mục chứa SQL Server) và một vùng RAM riêng.
+			+ Vì được sinh ra để phục vụ dữ liệu, nên khi khởi chạy, một thể hiện sẽ được nạp vào RAM (cài đặt trên ổ đĩa nhưng sẽ chạy trong RAM).
+	 	 	+ Nghĩa là trên một Server sẽ có nhiều Instance và mỗi Instance sẽ sống độc lập với nhau (có thể hoạt động độc lập trên RAM), nhưng vẫn có chung một mục đích là chờ yêu cầu xử lý dữ liệu từ nơi khác gửi đến.
 
 ==========================================================================
 
